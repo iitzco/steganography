@@ -19,9 +19,10 @@ unsigned char buffer2[2];
 char* seconds_to_time(float seconds);
 
 
- FILE *ptr;
- char *filename;
- struct HEADER header;
+FILE *ptr;
+char *filename;
+HEADER header;
+WAV wav;
 
 int main(int argc, char **argv) {
 
@@ -40,7 +41,7 @@ int main(int argc, char **argv) {
     // get filename from command line
     if (argc < 2) {
       printf("No wave file specified\n");
-      return;
+      return -1;
     }
     
     strcat(filename, "/");
@@ -167,7 +168,7 @@ int main(int argc, char **argv) {
  printf("Approx.Duration in seconds=%f\n", duration_in_seconds);
  printf("Approx.Duration in h:m:s=%s\n", seconds_to_time(duration_in_seconds));
 
-
+ wav.header = &header;
 
  // read each sample from data chunk if PCM
  if (header.format_type == 1) { // PCM

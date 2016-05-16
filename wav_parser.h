@@ -1,7 +1,9 @@
 // WAVE file header format
 // Source: http://truelogic.org/wordpress/2015/09/04/parsing-a-wav-file-in-c/
 
-struct HEADER {
+typedef unsigned char BYTE;
+
+typedef struct {
     unsigned char riff[4];                      // RIFF string
     unsigned int overall_size   ;               // overall size of file in bytes
     unsigned char wave[4];                      // WAVE string
@@ -15,4 +17,54 @@ struct HEADER {
     unsigned int bits_per_sample;               // bits per sample, 8- 8bits, 16- 16 bits etc
     unsigned char data_chunk_header [4];        // DATA string or FLLR string
     unsigned int data_size;                     // NumSamples * NumChannels * BitsPerSample/8 - size of the next chunk that will be read
+} HEADER;
+
+typedef struct {
+    HEADER *header;
+    BYTE *soundData;
+} WAV;
+/*
+typedef unsigned long DWORD;
+typedef unsigned char BYTE;
+typedef DWORD FOURCC; //Four-character code
+typedef FOURCC CKID;
+typedef DWORD CKSIZE; //Four-character-code chunk i
+
+
+struct wavStr
+{
+    RIFF_CK riff_desc; // MANDATORY
+    FMT_CK fmt; // Format Chunk MANDATORY
+    DATA_CK data; // Wave Data Chunk MANDATORY
 };
+
+typedef struct{
+    CKID chunkID;
+    CKSIZE chunkSize;
+    CKID format;
+} RIFF_CK;
+
+typedef struct{
+    CKID chunkID; //'fmt '
+    CKSIZE chunkSize; // 16 para PCM.Size of rest of subchunk.
+    WORD wFormatTag; // Format category,i.e.:PCM = 1 (no compres.)
+    WORD wChannels; // Number of channels:1, mono; 2, stereo
+    DWORD dwSamplesPerSec; // Sampling rate: Mhz
+    DWORD dwAvgBytesPerSec;
+    WORD wBlockAlign
+    WORD wBitsPerSample; //8, 16, etc.
+    WORD extraParamSize;// If PCM, doesn't exist
+    BYTE *extraParams;//space for extra params
+} FMT_CK;
+
+typedef struct{
+CKID chunkID; // 'data'
+CKSIZE chunkSize; // Bytes of data
+BYTE *soundData; // Sound data.
+} DATA_CK;
+*/
+
+
+
+
+ 
