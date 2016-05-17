@@ -24,6 +24,7 @@ typedef struct {
     unsigned int bits_per_sample;               // bits per sample, 8- 8bits, 16- 16 bits etc
     unsigned char data_chunk_header [4];        // DATA string or FLLR string
     unsigned int data_size;                     // NumSamples * NumChannels * BitsPerSample/8 - size of the next chunk that will be read
+    FILE * ptr;                                 // sound data FILE pointer
 } HEADER_PARSED;
 
 typedef struct{
@@ -61,3 +62,8 @@ typedef struct {
     HEADER_PARSED header_p;
     HEADER_NATIVE header_n;
 } HEADER;
+
+
+long get_size_of_each_sample(HEADER_PARSED *header_p);
+
+long get_num_samples(HEADER_PARSED *header_p);
