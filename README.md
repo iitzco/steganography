@@ -3,13 +3,12 @@
 ### How to use the parser
 
 ```bash
-$ gcc wav_parser.c
-$ chmod +x a.out
-$ ./a.out samples/fun.wav
+$ make
+$ ./stegowav samples/fun.wav
 ```
 
 This should display:
-```
+```bash
 Opening  file..
 RIFF HEADER
 parsed -> RIFF
