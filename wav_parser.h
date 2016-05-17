@@ -1,11 +1,18 @@
 // WAVE file header format
 // Source: http://truelogic.org/wordpress/2015/09/04/parsing-a-wav-file-in-c/
 
-typedef unsigned char BYTE;
+typedef unsigned int DWORD; // 4bytes
+typedef unsigned char BYTE; // 1byte
+typedef unsigned short  WORD; // 2bytes
+
+typedef DWORD FOURCC; //Four-character code
+typedef FOURCC CKID; //Four-character-code chunk identifier
+typedef DWORD CKSIZE; // 32-bit unsigned size value
+
 
 typedef struct {
     unsigned char riff[4];                      // RIFF string
-    unsigned int overall_size   ;               // overall size of file in bytes
+    unsigned int overall_size;                  // overall size of file in bytes
     unsigned char wave[4];                      // WAVE string
     unsigned char fmt_chunk_marker[4];          // fmt string with trailing null char
     unsigned int length_of_fmt;                 // length of the format data
@@ -17,31 +24,12 @@ typedef struct {
     unsigned int bits_per_sample;               // bits per sample, 8- 8bits, 16- 16 bits etc
     unsigned char data_chunk_header [4];        // DATA string or FLLR string
     unsigned int data_size;                     // NumSamples * NumChannels * BitsPerSample/8 - size of the next chunk that will be read
-} HEADER;
-
-typedef struct {
-    HEADER *header;
-    BYTE *soundData;
-} WAV;
-/*
-typedef unsigned long DWORD;
-typedef unsigned char BYTE;
-typedef DWORD FOURCC; //Four-character code
-typedef FOURCC CKID;
-typedef DWORD CKSIZE; //Four-character-code chunk i
-
-
-struct wavStr
-{
-    RIFF_CK riff_desc; // MANDATORY
-    FMT_CK fmt; // Format Chunk MANDATORY
-    DATA_CK data; // Wave Data Chunk MANDATORY
-};
+} HEADER_PARSED;
 
 typedef struct{
-    CKID chunkID;
-    CKSIZE chunkSize;
-    CKID format;
+    CKID chunkID; // 'RIFF'
+    CKSIZE chunkSize; // File format
+    CKID format; // Format: 'WAVE'
 } RIFF_CK;
 
 typedef struct{
@@ -51,20 +39,25 @@ typedef struct{
     WORD wChannels; // Number of channels:1, mono; 2, stereo
     DWORD dwSamplesPerSec; // Sampling rate: Mhz
     DWORD dwAvgBytesPerSec;
-    WORD wBlockAlign
+    WORD wBlockAlign;
     WORD wBitsPerSample; //8, 16, etc.
-    WORD extraParamSize;// If PCM, doesn't exist
-    BYTE *extraParams;//space for extra params
 } FMT_CK;
 
 typedef struct{
-CKID chunkID; // 'data'
-CKSIZE chunkSize; // Bytes of data
-BYTE *soundData; // Sound data.
+    CKID chunkID; // 'data'
+    CKSIZE chunkSize; // Bytes of data
+    BYTE *soundData; // Sound data.
 } DATA_CK;
-*/
+
+typedef struct
+{
+    RIFF_CK riff_desc; // MANDATORY
+    FMT_CK fmt; // Format Chunk MANDATORY
+    DATA_CK data; // Wave Data Chunk MANDATORY
+} HEADER_NATIVE;
 
 
-
-
- 
+typedef struct {
+    HEADER_PARSED header_p;
+    HEADER_NATIVE header_n;
+} HEADER;
