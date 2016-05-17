@@ -76,6 +76,8 @@ int main(int argc, char **argv) {
 
     int read = 0;
 
+    /* ------------------------ RIFF Chunk Descriptor ------------------------ */
+
     // Read RIFF chunkID
 
     read = fread(header.header_p.riff, sizeof(header.header_p.riff), 1, ptr);
@@ -84,8 +86,10 @@ int main(int argc, char **argv) {
     printf("parsed -> %s\n", header.header_p.riff);
     printf("native -> ");
     print_mem_rep((char *)&(header.header_n.riff_desc.chunkID),sizeof(CKID));
+    printf("\n");
 
     // Read RIFF ChunkSize
+
     read = fread(buffer4, sizeof(buffer4), 1, ptr);
     memcpy(&header.header_n.riff_desc.chunkSize,buffer4,sizeof(CKSIZE));
 
@@ -99,24 +103,54 @@ int main(int argc, char **argv) {
     printf("parsed -> %d\n", header.header_p.overall_size);
     printf("native -> ");
     print_mem_rep((char *)&(header.header_n.riff_desc.chunkSize), sizeof(CKSIZE));
+    printf("\n");
 
+    // Read format ('WAVE')
+
+    printf("FORMAT HEADER\n");
     read = fread(header.header_p.wave, sizeof(header.header_p.wave), 1, ptr);
-    printf("(9-12) Wave marker: %s\n", header.header_p.wave);
+    memcpy(&header.header_n.riff_desc.format, header.header_p.wave, sizeof(CKID));
+    printf("parsed -> %s\n", header.header_p.wave);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.riff_desc.format),sizeof(CKID));
+    printf("\n");
+
+    /* ---------------------------------------------------------------------------- */
+    /* ------------------------ FMT sub-chunk ------------------------ */
+
+    // Read 'fmt '
 
     read = fread(header.header_p.fmt_chunk_marker, sizeof(header.header_p.fmt_chunk_marker), 1, ptr);
-    printf("(13-16) Fmt marker: %s\n", header.header_p.fmt_chunk_marker);
+    memcpy(&header.header_n.fmt.chunkID, header.header_p.fmt_chunk_marker, sizeof(CKID));
+
+    printf("FMT HEADER\n");
+    printf("parsed -> %s\n", header.header_p.fmt_chunk_marker);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.fmt.chunkID),sizeof(CKID));
+    printf("\n");
+
+    // Read subchunkSize
 
     read = fread(buffer4, sizeof(buffer4), 1, ptr);
-    printf("%u %u %u %u\n", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
+    memcpy(&header.header_n.fmt.chunkSize,buffer4,sizeof(CKSIZE));
 
     // convert little endian to big endian 4 byte integer
     header.header_p.length_of_fmt = buffer4[0] |
                                (buffer4[1] << 8) |
                                (buffer4[2] << 16) |
                                (buffer4[3] << 24);
-    printf("(17-20) Length of Fmt header:header_p. %u \n", header.header_p.length_of_fmt);
 
-    read = fread(buffer2, sizeof(buffer2), 1, ptr); printf("%u %u \n", buffer2[0], buffer2[1]);
+    printf("FORMAT CATEGORY (16 for PCM)\n");
+    printf("parsed -> %d\n", header.header_p.length_of_fmt);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.fmt.chunkSize), sizeof(CKSIZE));
+    printf("\n");
+
+    // Read Audio Format
+
+    read = fread(buffer2, sizeof(buffer2), 1, ptr);
+    memcpy(&header.header_n.fmt.wFormatTag, buffer2, sizeof(WORD));
+
 
     header.header_p.format_type = buffer2[0] | (buffer2[1] << 8);
     char format_name[10] = "";
@@ -127,60 +161,118 @@ int main(int argc, char **argv) {
     else if (header.header_p.format_type == 7)
      strcpy(format_name, "Mu-law");
 
-    printf("(21-22) Format type: %u %s \n", header.header_p.format_type, format_name);
+    printf("AUDIO FORMAT CATEGORY (1 for PCM)\n");
+    printf("parsed -> %d (%s)\n", header.header_p.format_type, format_name);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.fmt.wFormatTag), sizeof(WORD));
+    printf("\n");
+
+    // Read Audio Channels
 
     read = fread(buffer2, sizeof(buffer2), 1, ptr);
-    printf("%u %u \n", buffer2[0], buffer2[1]);
-
+    memcpy(&header.header_n.fmt.wChannels, buffer2, sizeof(WORD));
     header.header_p.channels = buffer2[0] | (buffer2[1] << 8);
-    printf("(23-24) Channels: %u \n", header.header_p.channels);
+
+    printf("AUDIO CHANNEL\n");
+    printf("parsed -> %d \n", header.header_p.channels);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.fmt.wChannels), sizeof(WORD));
+    printf("\n");
+
+    // Read Sample Rate
 
     read = fread(buffer4, sizeof(buffer4), 1, ptr);
-    printf("%u %u %u %u\n", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
+    memcpy(&header.header_n.fmt.dwSamplesPerSec, buffer4, sizeof(DWORD));
 
     header.header_p.sample_rate = buffer4[0] |
                            (buffer4[1] << 8) |
                            (buffer4[2] << 16) |
                            (buffer4[3] << 24);
 
-    printf("(25-28) Sample rate: %u\n", header.header_p.sample_rate);
+    printf("AUDIO SAMPLE RATE\n");
+    printf("parsed -> %d \n", header.header_p.sample_rate);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.fmt.dwSamplesPerSec), sizeof(DWORD));
+    printf("\n");
+
+    // Read Byte Rate
 
     read = fread(buffer4, sizeof(buffer4), 1, ptr);
-    printf("%u %u %u %u\n", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
+    memcpy(&header.header_n.fmt.dwAvgBytesPerSec, buffer4, sizeof(DWORD));
 
     header.header_p.byterate  = buffer4[0] |
                            (buffer4[1] << 8) |
                            (buffer4[2] << 16) |
                            (buffer4[3] << 24);
-    printf("(29-32) Byte Rate: %u , Bit Rate:%u\n", header.header_p.byterate, header.header_p.byterate*8);
+
+    printf("AUDIO BYTE RATE\n");
+    printf("parsed -> %d \n", header.header_p.byterate);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.fmt.dwAvgBytesPerSec), sizeof(DWORD));
+    printf("\n");
+
+    // Read Block Alignment
 
     read = fread(buffer2, sizeof(buffer2), 1, ptr);
-    printf("%u %u \n", buffer2[0], buffer2[1]);
+    memcpy(&header.header_n.fmt.wBlockAlign, buffer2, sizeof(WORD));
 
     header.header_p.block_align = buffer2[0] |
                        (buffer2[1] << 8);
-    printf("(33-34) Block Alignment: %u \n", header.header_p.block_align);
+
+
+    printf("BLOCK ALIGNMENT\n");
+    printf("parsed -> %d \n", header.header_p.block_align);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.fmt.wBlockAlign), sizeof(WORD));
+    printf("\n");
+
+    // Read Bits Per Sample
 
     read = fread(buffer2, sizeof(buffer2), 1, ptr);
-    printf("%u %u \n", buffer2[0], buffer2[1]);
+    memcpy(&header.header_n.fmt.wBitsPerSample, buffer2, sizeof(WORD));
 
     header.header_p.bits_per_sample = buffer2[0] |
                        (buffer2[1] << 8);
-    printf("(35-36) Bits per sample: %u \n", header.header_p.bits_per_sample);
+
+    printf("BYTES PER SAMPLE\n");
+    printf("parsed -> %d \n", header.header_p.bits_per_sample);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.fmt.wBitsPerSample), sizeof(WORD));
+    printf("\n");
+
+    /* ---------------------------------------------------------------------------- */
+    /* ------------------------ DATA sub-chunk Descriptor ------------------------ */
+
+    // Read Data marker
 
     read = fread(header.header_p.data_chunk_header, sizeof(header.header_p.data_chunk_header), 1, ptr);
-    printf("(37-40) Data Marker: %s \n", header.header_p.data_chunk_header);
+    memcpy(&header.header_n.data.chunkID,header.header_p.data_chunk_header, sizeof(CKID));
+
+    printf("DATA HEADER\n");
+    printf("parsed -> %s\n", header.header_p.data_chunk_header);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.data.chunkID),sizeof(CKID));
+    printf("\n");
+
+    // Read Size of data
 
     read = fread(buffer4, sizeof(buffer4), 1, ptr);
-    printf("%u %u %u %u\n", buffer4[0], buffer4[1], buffer4[2], buffer4[3]);
+    memcpy(&header.header_n.data.chunkSize, buffer4, sizeof(CKSIZE));
 
     header.header_p.data_size = buffer4[0] |
                    (buffer4[1] << 8) |
                    (buffer4[2] << 16) |
                    (buffer4[3] << 24 );
-    printf("(41-44) Size of data chunk: %u \n", header.header_p.data_size);
 
+    printf("DATA SIZE\n");
+    printf("parsed -> %d \n", header.header_p.data_size);
+    printf("native -> ");
+    print_mem_rep((char *)&(header.header_n.data.chunkSize), sizeof(CKSIZE));
+    printf("\n");
 
+    /* ---------------------------------------------------------------------------- */
+
+    printf("EXTRA DATA\n");
     // calculate no.of samples
     long num_samples = (8 * header.header_p.data_size) / (header.header_p.channels * header.header_p.bits_per_sample);
     printf("Number of samples:%lu \n", num_samples);
