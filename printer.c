@@ -42,7 +42,10 @@ void print_all_headers(HEADER *header) {
     printf("\n");
 
     printf("FORMAT HEADER\n");
-    printf("parsed -> %s\n", header->header_p.wave);
+    char wave_header[5];
+    memcpy(wave_header, header->header_p.wave, 4);
+    wave_header[4]=0;
+    printf("parsed -> %s\n", wave_header);
     printf("native -> ");
     print_mem_rep((char *)&(header->header_n.riff_desc.format),sizeof(CKID));
     printf("\n");

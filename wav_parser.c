@@ -30,7 +30,8 @@ int main(int argc, char **argv) {
     FILE *ptr;
     
     //Initialize in 0
-    HEADER header = {0};
+    HEADER header;
+    memset(&header, 0, sizeof(header));
 
     char *filename = get_file_path(argc, argv);
     if (filename==NULL) {
