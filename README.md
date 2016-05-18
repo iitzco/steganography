@@ -68,6 +68,7 @@ Size of each sample:2 bytes
 Approx.Duration in seconds=122.418251
 Approx.Duration in h:m:s=0:2:2.418
 ```
+You'll also have a copy of the wav input in samples/dup.wav (written with the parsed data, not just through a pipeline).
 
 To check WAV format specification, go to [Microsoft WAVE specs](http://soundfile.sapp.org/doc/WaveFormat/)
 
