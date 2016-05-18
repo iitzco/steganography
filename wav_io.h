@@ -74,4 +74,7 @@ long get_num_samples(HEADER_PARSED *header_p);
 
 int read_headers(HEADER *header, FILE *ptr);
 
+int write_headers(HEADER *header, FILE *ptr);
+
+int write_sound_data(HEADER *header, FILE *ptr);
 #endif

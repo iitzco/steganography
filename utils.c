@@ -45,7 +45,7 @@ long little_to_big_2_bytes(unsigned char buffer2[]) {
     return buffer2[0] | (buffer2[1]<<8);
 }
 
-char* get_file_path(int argc, char **argv) {
+char* get_file_path(char *path) {
 
     char *filename = (char*) malloc(sizeof(char) * 1024);
 
@@ -59,16 +59,9 @@ char* get_file_path(int argc, char **argv) {
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
       
        strcpy(filename, cwd);
-
-       // get filename from command line
-       if (argc < 2) {
-         printf("No wave file specified\n");
-         return NULL;
-       }
        
        strcat(filename, "/");
-       strcat(filename, argv[1]);
-       printf("Reading %s\n", filename);
+       strcat(filename,path);
        return filename;
     }
     return NULL;

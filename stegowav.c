@@ -13,32 +13,43 @@ int main(int argc, char **argv) {
     memset(&header, 0, sizeof(header));
 
     FILE *ptr;
-    char *filename = get_file_path(argc, argv);
+    if (argc < 2){
+        printf("No wav provided.\n");
+        exit(1);
+    }
+    char *filename = get_file_path(argv[1]);
     if (filename==NULL) {
         exit(1);
     }
 
     // open file
-    ptr = fopen(filename, "rb");
+    ptr = fopen(filename, "r");
     if (ptr == NULL) {
        printf("Error opening file\n");
        exit(1);
     }
 
-    int ret = read_headers(&header,ptr);
-
-    if (ret < 0){
-        printf("Error\n");
-        exit(1);
-    }
+    read_headers(&header,ptr);
 
     print_all_headers(&header);
     print_extra_data(&header.header_p);
 
-    fclose(ptr);
-
      // cleanup before quitting
+
+    filename = get_file_path("samples/dup.wav");
+
+    if (filename==NULL) {
+        exit(1);
+    }
+
+    FILE *ptr_write = fopen(filename, "w");
+
+    write_headers(&header, ptr_write);
+    write_sound_data(&header, ptr_write);
+
+    /* fclose(ptr); */
     free(filename);
+
     return 0;
 
 }

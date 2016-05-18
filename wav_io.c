@@ -126,3 +126,88 @@ int read_headers(HEADER *header, FILE *ptr) {
     return 0;
 
 }
+
+int write_headers(HEADER *header, FILE *ptr) {
+    
+    int write = 0;
+
+    /* ------------------------ RIFF Chunk Descriptor ------------------------ */
+
+    // Write RIFF chunkID
+
+    write= fwrite(&header->header_n.riff_desc.chunkID, sizeof(CKID), 1, ptr);
+
+    // Write RIFF ChunkSize
+
+    write= fwrite(&header->header_n.riff_desc.chunkSize, sizeof(CKSIZE), 1, ptr);
+
+    // Write format ('WAVE')
+
+    write= fwrite(&header->header_n.riff_desc.format, sizeof(CKID), 1, ptr);
+
+    /* ---------------------------------------------------------------------------- */
+    /* ------------------------ FMT sub-chunk ------------------------ */
+
+    // Write 'fmt '
+
+    write= fwrite(&header->header_n.fmt.chunkID, sizeof(CKID), 1, ptr);
+
+    // Write subchunkSize
+
+    write= fwrite(&header->header_n.fmt.chunkSize, sizeof(CKSIZE), 1, ptr);
+
+    // Write Audio Format
+
+    write= fwrite(&header->header_n.fmt.wFormatTag, sizeof(WORD), 1, ptr);
+
+    // Write Audio Channels
+
+    write= fwrite(&header->header_n.fmt.wChannels, sizeof(WORD), 1, ptr);
+
+    // Write Sample Rate
+
+    write= fwrite(&header->header_n.fmt.dwSamplesPerSec, sizeof(DWORD), 1, ptr);
+
+    // Write Byte Rate
+
+    write= fwrite(&header->header_n.fmt.dwAvgBytesPerSec, sizeof(DWORD), 1, ptr);
+
+    // Write Block Alignment
+
+    write= fwrite(&header->header_n.fmt.wBlockAlign, sizeof(WORD), 1, ptr);
+
+    // Write Bits Per Sample
+
+    write= fwrite(&header->header_n.fmt.wBitsPerSample, sizeof(WORD), 1, ptr);
+
+    /* ---------------------------------------------------------------------------- */
+    /* ------------------------ DATA sub-chunk Descriptor ------------------------ */
+
+    // Write Data marker
+
+    write= fwrite(&header->header_n.data.chunkID, sizeof(CKID), 1, ptr);
+
+    // Write Size of data
+
+    write= fwrite(&header->header_n.data.chunkSize, sizeof(CKSIZE), 1, ptr);
+
+    /* ---------------------------------------------------------------------------- */
+
+    return 0;
+
+}
+
+int write_sound_data(HEADER *header, FILE *ptr) {
+
+    // Write sound data
+    int i = header->header_p.data_size;
+    char *byte = (char *)malloc(1);
+
+    while (i-->0) {
+        fread(byte, 1, 1, header->header_p.ptr);
+        // TODO -> here goes steg. logic, between reading and writing
+        fwrite(byte, 1, 1, ptr);
+    }
+    return 0;
+
+}
