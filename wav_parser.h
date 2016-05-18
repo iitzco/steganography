@@ -1,5 +1,9 @@
 // WAVE file header format
 // Source: http://truelogic.org/wordpress/2015/09/04/parsing-a-wav-file-in-c/
+#ifndef WAVPARSER_H
+#define WAVPARSER_H
+
+#include <stdio.h>
 
 typedef unsigned int DWORD; // 4bytes
 typedef unsigned char BYTE; // 1byte
@@ -67,3 +71,7 @@ typedef struct {
 long get_size_of_each_sample(HEADER_PARSED *header_p);
 
 long get_num_samples(HEADER_PARSED *header_p);
+
+int read_headers(HEADER *header, int argc, char **argv);
+
+#endif

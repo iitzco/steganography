@@ -1,3 +1,7 @@
+#ifndef PRINTER_H
+#define PRINTER_H
+
+#include "wav_parser.h"
 
 void print_extra_data(HEADER_PARSED *header_p);
 
@@ -9,3 +13,5 @@ void print_sound_data(HEADER *header);
 
 #define TRUE 1 
 #define FALSE 0
+
+#endif

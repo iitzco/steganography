@@ -30,7 +30,7 @@ void print_extra_data(HEADER_PARSED *header_p) {
 void print_all_headers(HEADER *header) {
 
     printf("RIFF HEADER\n");
-    printf("parsed -> %s\n", header->header_p.riff);
+    printf("parsed -> %.4s\n", header->header_p.riff);
     printf("native -> ");
     print_mem_rep((char *)&(header->header_n.riff_desc.chunkID),sizeof(CKID));
     printf("\n");
@@ -42,10 +42,7 @@ void print_all_headers(HEADER *header) {
     printf("\n");
 
     printf("FORMAT HEADER\n");
-    char wave_header[5];
-    memcpy(wave_header, header->header_p.wave, 4);
-    wave_header[4]=0;
-    printf("parsed -> %s\n", wave_header);
+    printf("parsed -> %.4s\n", header->header_p.wave);
     printf("native -> ");
     print_mem_rep((char *)&(header->header_n.riff_desc.format),sizeof(CKID));
     printf("\n");
