@@ -3,10 +3,9 @@
 //  *
 //  * Source: http://truelogic.org/wordpress/2015/09/04/parsing-a-wav-file-in-c/
 //  **/
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "wav_parser.h"
+#include "wav_io.h"
 #include "utils.h"
 
 unsigned char buffer4[4];
@@ -22,21 +21,7 @@ long get_num_samples(HEADER_PARSED *header_p) {
 
 }
 
-int read_headers(HEADER *header, int argc, char **argv) {
-
-    FILE *ptr;
-    
-    char *filename = get_file_path(argc, argv);
-    if (filename==NULL) {
-        exit(1);
-    }
-
-    // open file
-    ptr = fopen(filename, "rb");
-    if (ptr == NULL) {
-       printf("Error opening file\n");
-       return -1;
-    }
+int read_headers(HEADER *header, FILE *ptr) {
 
     int read = 0;
 
@@ -138,11 +123,6 @@ int read_headers(HEADER *header, int argc, char **argv) {
 
     /* ---------------------------------------------------------------------------- */
 
-    printf("Closing file..\n");
-    fclose(ptr);
-
-     // cleanup before quitting
-    free(filename);
     return 0;
 
 }

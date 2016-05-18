@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "wav_parser.h"
+#include "wav_io.h"
 #include "utils.h"
 #include "printer.h"
 

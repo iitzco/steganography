@@ -1,7 +1,7 @@
 #ifndef PRINTER_H
 #define PRINTER_H
 
-#include "wav_parser.h"
+#include "wav_io.h"
 
 void print_extra_data(HEADER_PARSED *header_p);
 

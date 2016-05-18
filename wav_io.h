@@ -72,6 +72,6 @@ long get_size_of_each_sample(HEADER_PARSED *header_p);
 
 long get_num_samples(HEADER_PARSED *header_p);
 
-int read_headers(HEADER *header, int argc, char **argv);
+int read_headers(HEADER *header, FILE *ptr);
 
 #endif
