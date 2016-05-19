@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "lsb.h"
 
 typedef struct {
   char mask;
@@ -13,7 +14,7 @@ void _lsb_encode(lsb_params_t params, char *carrier, size_t carrier_size, size_t
   char mask = params.mask;  // change to 0x07
   char off = params.ioff;
 
-  for (int i = offset, j = 0; i < carrier_size && j < msg_size; i += chunk_size) {
+  for (int i = offset + chunk_size - 1, j = 0; i < carrier_size && j < msg_size; i += chunk_size) {
     char msgbit = (msg[j] >> off) & mask;
 
     carrier[i] &= ~mask;
@@ -31,7 +32,7 @@ void _lsb_decode(lsb_params_t params, char *carrier, size_t carrier_size, size_t
   char mask = params.mask;
   char off = params.ioff;
 
-  for (int i = offset, j = 0; i < carrier_size && j < msg_size; i += chunk_size) {
+  for (int i = offset + chunk_size - 1, j = 0; i < carrier_size && j < msg_size; i += chunk_size) {
     char msgbit = carrier[i] & mask;
     msg[j] |= msgbit << off;
 
@@ -63,8 +64,8 @@ int main() {
   char carrier[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   char msg[1] = {0xFF};
 
-  lsb_encode(carrier, 16, 0, 2, msg, 1);
-  lsb_decode(carrier, 16, 0, 2, msg, 1);
+  lsb4_encode(carrier, 16, 0, 2, msg, 1);
+  lsb4_decode(carrier, 16, 0, 2, msg, 1);
 
   for (int i = 0; i < 16; i++) {
     printf("%hhX ", carrier[i]);
