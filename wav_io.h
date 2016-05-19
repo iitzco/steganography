@@ -76,5 +76,7 @@ int read_headers(HEADER *header, FILE *ptr);
 
 int write_headers(HEADER *header, FILE *ptr);
 
-int write_sound_data(HEADER *header, FILE *ptr);
+int write_steg_sound_data(HEADER *header, FILE *ptr, char* msg, size_t msg_size, int mode);
+
+int read_steg_sound_data(HEADER * header, char* msg, size_t msg_size, int mode);
 #endif

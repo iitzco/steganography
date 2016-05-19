@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "wav_io.h"
 #include "utils.h"
+#include "lsb.h"
 
 unsigned char buffer4[4];
 unsigned char buffer2[2];
@@ -197,17 +198,51 @@ int write_headers(HEADER *header, FILE *ptr) {
 
 }
 
-int write_sound_data(HEADER *header, FILE *ptr) {
+int write_steg_sound_data(HEADER *header, FILE *ptr, char* msg, size_t msg_size, int mode) {
 
-    // Write sound data
-    int i = header->header_p.data_size;
-    char *byte = (char *)malloc(1);
+    char sample_size = header->header_p.bits_per_sample / 8;
+    char block_byte_size = 0;
 
-    while (i-->0) {
+    if (mode == LSB1) {
+       block_byte_size = sample_size*8; 
+    } else if (mode == LSB4) {
+        block_byte_size = sample_size*2;
+    }
+
+    char sample[block_byte_size];
+
+    for (int i = 0; i < msg_size; i++) {
+        fread(sample, block_byte_size, 1, header->header_p.ptr);
+        lsb_encode(sample, block_byte_size, 0, sample_size, &(msg[i]), 1, mode);
+        fwrite(sample, block_byte_size, 1, ptr);
+    }
+
+    int remain = header->header_p.data_size - msg_size*block_byte_size;
+    char byte[1];
+
+    while (remain-->0) {
         fread(byte, 1, 1, header->header_p.ptr);
-        // TODO -> here goes steg. logic, between reading and writing
         fwrite(byte, 1, 1, ptr);
     }
     return 0;
 
+}
+
+int read_steg_sound_data(HEADER * header, char* msg, size_t msg_size, int mode) {
+
+    //TODO this method should read the msg_len also, not recieve it as parameter
+
+    char sample_size = header->header_p.bits_per_sample / 8;
+    int block_size = 0 ;
+
+    if (mode == LSB1) {
+       block_size = sample_size*msg_size*8;
+    } else if (mode == LSB4) {
+        block_size = sample_size*msg_size*2;
+    }
+
+    char sample[block_size];
+    fread(sample, block_size, 1, header->header_p.ptr);
+    lsb_decode(sample, block_size, 0, sample_size, msg, msg_size, mode);
+    return 0;
 }
