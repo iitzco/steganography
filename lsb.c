@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 void lsb_encode(char *carrier, size_t carrier_size, size_t offset, size_t chunk_size, char *msg, size_t msg_size) {
-  // TODO: chunk_size handling
   char mask = 0x01;
   char off = 7;
 
@@ -20,7 +19,6 @@ void lsb_encode(char *carrier, size_t carrier_size, size_t offset, size_t chunk_
 }
 
 void lsb_decode(char *carrier, size_t carrier_size, size_t offset, size_t chunk_size, char *msg, size_t msg_size) {
-  // TODO: chunk_size handling
   char mask = 0x01;
   char off = 7;
 
