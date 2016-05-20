@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,9 +21,10 @@ int main(int argc, char **argv) {
     char *filename = arguments.p_wavefile;
 
     printf("Opening file %s...\n", arguments.p_wavefile);
+
     ptr = fopen(filename, "r");
     if (ptr == NULL) {
-        printf("Error opening file\n");
+        perror(filename);
         exit(1);
     }
 
@@ -32,9 +34,17 @@ int main(int argc, char **argv) {
     printf("Writing hidden info in %s...\n", arguments.out_file);
     filename = arguments.out_file;
     FILE *ptr_write = fopen(filename, "w");
+    if (ptr_write == NULL) {
+        perror(filename);
+        exit(1);
+    }
 
     filename = arguments.in_file;
     FILE *ptr_in_data = fopen(filename, "r");
+    if (ptr_in_data == NULL) {
+        perror(filename);
+        exit(1);
+    }
 
     char *data = file_to_char_array(ptr_in_data);
     int data_size = strlen(data);
