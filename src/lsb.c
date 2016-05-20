@@ -17,9 +17,9 @@ void _lsb_encode(lsb_params_t params, char *carrier, size_t carrier_size, size_t
     char msgbit = (msg[j] >> off) & mask;
 
     carrier[i] &= ~mask;
-    carrier[i] |= mask & msgbit;
+    carrier[i] |= msgbit;
 
-    off -= params.doff;  // change to 4
+    off -= params.doff;
     if (off < 0) {
       off += 8;
       j++;
