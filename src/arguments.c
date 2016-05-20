@@ -4,6 +4,21 @@
 #include <stdlib.h>
 #include <strings.h>
 
+void usage() {
+    printf("%s",
+           "Usage:\n"
+           "--embed  OR --extract  to indicate mode\n"
+           "[embed mode only] --in  file to be hidden \n"
+           "--p  WAVE file to carry the message\n"
+           "--out output file.\n"
+           "--steg <LSB1|LSB4|LSBE> algorithm to be used\n"
+
+           "[optional] --a <aes128|aes192|aes256|des> encryption "
+           "algorithm\n"
+           "[optional] --m <ecb|cfb|ofb|cbc> encryption mode \n"
+           "[optional] --pass password \n");
+}
+
 void parseArguments(int argc, char** argv, ARGUMENTS* arguments) {
     memset(arguments, 0, sizeof(*arguments));
     int c;
@@ -24,17 +39,7 @@ void parseArguments(int argc, char** argv, ARGUMENTS* arguments) {
                             &option_index)) != -1) {
         switch (c) {
             case 'h':
-                printf("Usage:\n");
-                printf("--embed  OR --extract  to indicate mode\n");
-                printf("[embed mode only] --in  file to be hidden \n");
-                printf("--p  WAVE file to carry the message\n");
-                printf("--out output file.\n");
-                printf("--steg <LSB1|LSB4|LSBE> algorithm to be used\n");
-                printf(
-                    "[optional] --a <aes128|aes192|aes256|des> encryption "
-                    "algorithm\n");
-                printf("[optional] --m <ecb|cfb|ofb|cbc> encryption mode \n");
-                printf("[optional] --pass password \n");
+                usage();
                 break;
             case 'e':
                 /* puts ("option -e or --embed"); */
