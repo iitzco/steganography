@@ -40,6 +40,7 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
         switch (c) {
             case 'h':
                 usage();
+                exit(0);
                 break;
             case 'e':
                 /* puts ("option -e or --embed"); */
@@ -52,7 +53,7 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
                 arguments->mode = EMBED;
                 break;
             case 'x':
-                puts("option -x or --extract");
+                /* puts("option -x or --extract"); */
                 if (arguments->mode == EMBED) {
                     fprintf(
                         stderr,
@@ -62,19 +63,19 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
                 arguments->mode = EXTRACT;
                 break;
             case 'i':
-                printf("option -i  or -- in with value `%s'\n", optarg);
+                /* printf("option -i  or -- in with value `%s'\n", optarg); */
                 arguments->in_file = optarg;
                 break;
             case 'p':
-                printf("option -p or --p with value `%s'\n", optarg);
+                /* printf("option -p or --p with value `%s'\n", optarg); */
                 arguments->p_wavefile = optarg;
                 break;
             case 'o':
-                printf("option -o or --out with value `%s'\n", optarg);
+                /* printf("option -o or --out with value `%s'\n", optarg); */
                 arguments->out_file = optarg;
                 break;
             case 's':
-                printf("option -s or --steg with value `%s'\n", optarg);
+                /* printf("option -s or --steg with value `%s'\n", optarg); */
                 if (strlen(optarg) != 4) {
                     fprintf(stderr,
                             "ERROR - wrong argument for --steg. Options are: "
@@ -95,7 +96,7 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
                 }
                 break;
             case 'a':
-                printf("option -a or -a with value `%s'\n", optarg);
+                /* printf("option -a or -a with value `%s'\n", optarg); */
                 if (strlen(optarg) != 6 && strlen(optarg) != 3) {
                     fprintf(stderr,
                             "a ERROR - wrong argument for --a. Options are: "
@@ -120,7 +121,7 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
                 }
                 break;
             case 'm':
-                printf("option -m or --m with value `%s'\n", optarg);
+                /* printf("option -m or --m with value `%s'\n", optarg); */
                 if (strlen(optarg) != 3) {
                     fprintf(stderr,
                             "ERROR - wrong argument for --m. Options are: "
@@ -144,7 +145,7 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
                 break;
 
             case 'w':
-                printf("option -w or --pass with value `%s'\n", optarg);
+                /* printf("option -w or --pass with value `%s'\n", optarg); */
                 arguments->pass = optarg;
                 break;
 

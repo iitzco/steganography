@@ -3,6 +3,7 @@
 
 #include "lsb.h"
 
+
 typedef enum t_mode { MODE_NONE, EMBED, EXTRACT } Mode;
 typedef enum t_a { A_NONE, AES128, AES192, AES256, DES } A;
 typedef enum t_m { M_NONE, ECB, CFB, OFB, CBC } M;

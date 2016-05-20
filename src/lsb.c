@@ -48,7 +48,7 @@ void _lsb_decode(lsb_params_t params, char *carrier, size_t carrier_size,
 }
 
 void lsb_encode(char *carrier, size_t carrier_size, size_t offset,
-                size_t chunk_size, char *msg, size_t msg_size, int mode) {
+                size_t chunk_size, char *msg, size_t msg_size, Steg mode) {
     if (mode == LSB1) {
         _lsb_encode(_LSB, carrier, carrier_size, offset, chunk_size, msg,
                     msg_size);
@@ -59,7 +59,7 @@ void lsb_encode(char *carrier, size_t carrier_size, size_t offset,
 }
 
 void lsb_decode(char *carrier, size_t carrier_size, size_t offset,
-                size_t chunk_size, char *msg, size_t msg_size, int mode) {
+                size_t chunk_size, char *msg, size_t msg_size, Steg mode) {
     if (mode == LSB1) {
         _lsb_decode(_LSB, carrier, carrier_size, offset, chunk_size, msg,
                     msg_size);

@@ -4,8 +4,10 @@
 #define WAVPARSER_H
 
 #include <stdio.h>
+#include "lsb.h" 
 
 #define HEADER_SIZE 44
+#define BLOCK_SIZE 1024
 
 typedef struct {
     unsigned char native_header[HEADER_SIZE];  // Full native header
@@ -31,9 +33,8 @@ int wav_header_read(HEADER *header, FILE *ptr);
 
 int wav_header_write(HEADER *header, FILE *ptr);
 
-int wav_stego_encode(HEADER *header, FILE *ptr, char *msg, size_t msg_size,
-                     int mode);
+int wav_stego_encode(HEADER *header, FILE *ptr, FILE *msg, Steg mode);
 
-int wav_stego_decode(HEADER *header, char *msg, size_t msg_size, int mode);
+int wav_stego_decode(HEADER *header, char *msg, size_t msg_size, Steg mode);
 
 #endif

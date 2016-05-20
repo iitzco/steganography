@@ -116,8 +116,8 @@ int wav_header_write(HEADER *header, FILE *ptr) {
     return 0;
 }
 
-int wav_stego_encode(HEADER *header, FILE *ptr, char *msg, size_t msg_size,
-                     int mode) {
+int wav_stego_encode(HEADER *header, FILE *ptr, FILE * msg, Steg mode) {
+
     char sample_size = header->bits_per_sample / 8;
     char block_byte_size = 0;
 
@@ -127,25 +127,48 @@ int wav_stego_encode(HEADER *header, FILE *ptr, char *msg, size_t msg_size,
         block_byte_size = sample_size * 2;
     }
 
-    char sample[block_byte_size];
+    //First write length
 
-    for (int i = 0; i < msg_size; i++) {
-        fread(sample, block_byte_size, 1, header->ptr);
-        lsb_encode(sample, block_byte_size, 0, sample_size, &(msg[i]), 1, mode);
-        fwrite(sample, block_byte_size, 1, ptr);
+    char sample_for_size[block_byte_size*4];
+    unsigned long length = get_file_size(msg);
+    printf("SIZE of input file: %lu\n",length);
+
+    lsb_encode(sample_for_size, block_byte_size*4, 0, sample_size, (char *) &length, 4, mode);
+    fwrite(sample_for_size, block_byte_size*4, 1, ptr);
+
+    //The write input file
+
+    char sample[block_byte_size*BLOCK_SIZE];
+    char* block = (char*) malloc(BLOCK_SIZE);
+    int read = 0;
+    while (length > BLOCK_SIZE) {
+        fread(block, BLOCK_SIZE, 1, msg); 
+        read = fread(sample, block_byte_size, BLOCK_SIZE, header->ptr);
+        printf("Loop %d and length %lu\n",read,length);
+        lsb_encode(sample, block_byte_size*BLOCK_SIZE, 0, sample_size, block, BLOCK_SIZE, mode);
+        fwrite(sample, block_byte_size*BLOCK_SIZE, 1, ptr);
+        length -= BLOCK_SIZE;
     }
+    fread(block, length, 1, msg); 
+    read = fread(sample, block_byte_size, length, header->ptr);
+    printf("%d\n",read);
+    lsb_encode(sample, block_byte_size*length, 0, sample_size, block, length, mode);
+    fwrite(sample, block_byte_size, length, ptr);
 
-    int remain = header->data_size - msg_size * block_byte_size;
+    // Finally write rest of file
+
+    int remain = header->data_size - (4*block_byte_size) - (length*block_byte_size);
     char byte[1];
 
     while (remain-- > 0) {
         fread(byte, 1, 1, header->ptr);
         fwrite(byte, 1, 1, ptr);
     }
+
     return 0;
 }
 
-int wav_stego_decode(HEADER *header, char *msg, size_t msg_size, int mode) {
+int wav_stego_decode(HEADER *header, char *msg, size_t msg_size, Steg mode) {
     // TODO this method should read the msg_len also, not recieve it as
     // parameter
 
