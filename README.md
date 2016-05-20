@@ -1,74 +1,40 @@
 # Steganography on WAV files
 
-### How to use the parser
+### How to use
 
+To compile, run
 ```bash
 $ make
-$ ./stegowav samples/fun.wav
+```
+
+The program receives the wav file, the steganographic method and the text to hide. It creates a new wav file (samples/dup.wav) that contains the hidden data. After that, it reads this last wav file in order to retrieve the hidden text. 
+
+```bash
+$ ./stegowav input_file lsb[1|4] text_to_hide
+```
+
+Where:
+* input_file is a wav file where the text_to_hide will be hidden
+* lsb1 or lsb4 is the steganographic method
+* text_to_hide is the text that will be hidden in the wav file
+
+For example:
+
+```bash
+$ ./stegowav samples/fun.wav lsb4 HI,im_a_hidden_text!
 ```
 
 This should display:
 ```bash
-Opening  file..
-RIFF HEADER
-parsed -> RIFF
-native ->  52 49 46 46
-
-OVERALL SIZE HEADER
-parsed -> 1958692
-native ->  24 e3 1d 00
-
-FORMAT HEADER
-parsed -> WAVE
-native ->  57 41 56 45
-
-FMT HEADER
-parsed -> fmt
-native ->  66 6d 74 20
-
-FORMAT CATEGORY (16 for PCM)
-parsed -> 16
-native ->  10 00 00 00
-
-AUDIO FORMAT CATEGORY (1 for PCM)
-parsed -> 1 (PCM)
-native ->  01 00
-
-AUDIO CHANNEL
-parsed -> 1
-native ->  01 00
-
-AUDIO SAMPLE RATE
-parsed -> 8000
-native ->  40 1f 00 00
-
-AUDIO BYTE RATE
-parsed -> 16000
-native ->  80 3e 00 00
-
-BLOCK ALIGNMENT
-parsed -> 2
-native ->  02 00
-
-BYTES PER SAMPLE
-parsed -> 16
-native ->  10 00
-
-DATA HEADER
-parsed -> data
-native ->  64 61 74 61
-
-DATA SIZE
-parsed -> 1958656
-native ->  00 e3 1d 00
-
-EXTRA DATA
-Number of samples:979328
-Size of each sample:2 bytes
-Approx.Duration in seconds=122.418251
-Approx.Duration in h:m:s=0:2:2.418
+Opening file...
+Reading file...
+Writing hidden info in samples/dup.wav...
+Reading hidden info in samples/dup.wav...
+Hidden info:
+HI,im_a_hidden_text!
 ```
-You'll also have a copy of the wav input in samples/dup.wav (written with the parsed data, not just through a pipeline).
+
+Note that if the text to hide is too large and the method is lsb4, samples/dup.wav will have noticeable noise.
 
 To check WAV format specification, go to [Microsoft WAVE specs](http://soundfile.sapp.org/doc/WaveFormat/)
 
