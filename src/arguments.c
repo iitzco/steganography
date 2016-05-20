@@ -19,7 +19,7 @@ void usage() {
            "[optional] --pass password \n");
 }
 
-void parseArguments(int argc, char** argv, ARGUMENTS* arguments) {
+void parse_arguments(int argc, char** argv, ARGUMENTS* arguments) {
     memset(arguments, 0, sizeof(*arguments));
     int c;
     static struct option long_options[] = {{"help", no_argument, 0, 'h'},
@@ -166,7 +166,7 @@ void parseArguments(int argc, char** argv, ARGUMENTS* arguments) {
     }
 }
 
-void printArguments(ARGUMENTS* arguments) {
+void print_arguments(ARGUMENTS* arguments) {
     printf("MODE %u\n", arguments->mode);
     printf("IN %s\n", arguments->in_file);
     printf("P_WAVEFILE  %s\n", arguments->p_wavefile);

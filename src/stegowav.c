@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     ARGUMENTS arguments;
     HEADER header;
 
-    parseArguments(argc, argv, &arguments);
+    parse_arguments(argc, argv, &arguments);
 
     // Initialize in 0
     memset(&header, 0, sizeof(header));
