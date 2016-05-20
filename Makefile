@@ -1,7 +1,8 @@
 TARGET = stegowav
 LIBS = -lm
 CC = gcc
-CFLAGS = -g -Wall
+IDIR = ./include
+CFLAGS = -g -Wall -I$(IDIR)
 
 .PHONY: default all clean
 
