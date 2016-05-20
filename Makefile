@@ -3,6 +3,7 @@ LIBS = -lm
 CC = gcc
 IDIR = ./include
 CFLAGS = -g -Wall -I$(IDIR)
+LDFLAGS = -lcrypto
 
 .PHONY: default all clean format
 
@@ -19,7 +20,7 @@ OBJ = $(shell find . -name '*.o')
 .PRECIOUS: $(TARGET) $(OBJECTS)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
+	$(CC) $(OBJECTS) $(LDFLAGS) -Wall $(LIBS) -o $@
 
 clean:
 	find . -type f -name '*.o' -delete
