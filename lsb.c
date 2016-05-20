@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "lsb.h"
 
 typedef struct {

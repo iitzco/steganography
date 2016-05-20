@@ -1,3 +1,4 @@
+#include "arguments.h"
 #include "printer.h"
 #include "wav_io.h"
 #include "lsb.h"
@@ -8,6 +9,7 @@
 
 int main(int argc, char **argv) {
 
+    parseArguments(argc,argv);
     HEADER header;
 
     //Initialize in 0
