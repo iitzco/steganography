@@ -19,10 +19,8 @@ typedef struct
     char * pass;
 } ARGUMENTS;
 
-static ARGUMENTS arguments;
-
 void printArguments(ARGUMENTS* arguments);
 
-void parseArguments (int argc, char **argv);
+void parseArguments (int argc, char **argv, ARGUMENTS* arguments);
 
 #endif

@@ -5,16 +5,10 @@
 
 #include <stdio.h>
 
-typedef unsigned int DWORD; // 4bytes
-typedef unsigned char BYTE; // 1byte
-typedef unsigned short  WORD; // 2bytes
-
-typedef DWORD FOURCC; //Four-character code
-typedef FOURCC CKID; //Four-character-code chunk identifier
-typedef DWORD CKSIZE; // 32-bit unsigned size value
-
+#define HEADER_SIZE 44
 
 typedef struct {
+    unsigned char native_header[HEADER_SIZE];   // Full native header
     unsigned char riff[4];                      // RIFF string
     unsigned int overall_size;                  // overall size of file in bytes
     unsigned char wave[4];                      // WAVE string
@@ -29,48 +23,12 @@ typedef struct {
     unsigned char data_chunk_header [4];        // DATA string or FLLR string
     unsigned int data_size;                     // NumSamples * NumChannels * BitsPerSample/8 - size of the next chunk that will be read
     FILE * ptr;                                 // sound data FILE pointer
-} HEADER_PARSED;
-
-typedef struct{
-    CKID chunkID; // 'RIFF'
-    CKSIZE chunkSize; // File format
-    CKID format; // Format: 'WAVE'
-} RIFF_CK;
-
-typedef struct{
-    CKID chunkID; //'fmt '
-    CKSIZE chunkSize; // 16 para PCM.Size of rest of subchunk.
-    WORD wFormatTag; // Format category,i.e.:PCM = 1 (no compres.)
-    WORD wChannels; // Number of channels:1, mono; 2, stereo
-    DWORD dwSamplesPerSec; // Sampling rate: Mhz
-    DWORD dwAvgBytesPerSec;
-    WORD wBlockAlign;
-    WORD wBitsPerSample; //8, 16, etc.
-} FMT_CK;
-
-typedef struct{
-    CKID chunkID; // 'data'
-    CKSIZE chunkSize; // Bytes of data
-    BYTE *soundData; // Sound data.
-} DATA_CK;
-
-typedef struct
-{
-    RIFF_CK riff_desc; // MANDATORY
-    FMT_CK fmt; // Format Chunk MANDATORY
-    DATA_CK data; // Wave Data Chunk MANDATORY
-} HEADER_NATIVE;
-
-
-typedef struct {
-    HEADER_PARSED header_p;
-    HEADER_NATIVE header_n;
 } HEADER;
 
 
-long get_size_of_each_sample(HEADER_PARSED *header_p);
+long get_size_of_each_sample(HEADER *header);
 
-long get_num_samples(HEADER_PARSED *header_p);
+long get_num_samples(HEADER *header);
 
 int read_headers(HEADER *header, FILE *ptr);
 
@@ -79,4 +37,5 @@ int write_headers(HEADER *header, FILE *ptr);
 int write_steg_sound_data(HEADER *header, FILE *ptr, char* msg, size_t msg_size, int mode);
 
 int read_steg_sound_data(HEADER * header, char* msg, size_t msg_size, int mode);
+
 #endif
