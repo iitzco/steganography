@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
     ARGUMENTS arguments;
     HEADER header;
 
-    parse_arguments(argc, argv, &arguments);
+    args_parse(argc, argv, &arguments);
 
     // Initialize in 0
     memset(&header, 0, sizeof(header));
@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     }
 
     printf("Reading file...\n");
-    read_headers(&header, ptr);
+    wav_header_read(&header, ptr);
 
     printf("Writing hidden info in %s...\n", arguments.out_file);
     filename = arguments.out_file;
@@ -56,9 +56,9 @@ int main(int argc, char **argv) {
         mode = LSB4;
     }
 
-    write_headers(&header, ptr_write);
+    wav_header_write(&header, ptr_write);
 
-    write_steg_sound_data(&header, ptr_write, data, data_size, mode);
+    wav_stego_encode(&header, ptr_write, data, data_size, mode);
 
     fclose(ptr);
     fclose(ptr_in_data);
@@ -70,9 +70,9 @@ int main(int argc, char **argv) {
     ptr = fopen(filename, "r");
     char *hidden_msg = (char *)calloc(data_size + 1, sizeof(char));
 
-    read_headers(&header, ptr);
+    wav_header_read(&header, ptr);
 
-    read_steg_sound_data(&header, hidden_msg, data_size, mode);
+    wav_stego_decode(&header, hidden_msg, data_size, mode);
 
     printf("\nHidden info:\n%s\n", hidden_msg);
 

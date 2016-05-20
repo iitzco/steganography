@@ -27,17 +27,13 @@ typedef struct {
     FILE *ptr;               // sound data FILE pointer
 } HEADER;
 
-long get_size_of_each_sample(HEADER *header);
+int wav_header_read(HEADER *header, FILE *ptr);
 
-long get_num_samples(HEADER *header);
+int wav_header_write(HEADER *header, FILE *ptr);
 
-int read_headers(HEADER *header, FILE *ptr);
+int wav_stego_encode(HEADER *header, FILE *ptr, char *msg, size_t msg_size,
+                     int mode);
 
-int write_headers(HEADER *header, FILE *ptr);
-
-int write_steg_sound_data(HEADER *header, FILE *ptr, char *msg, size_t msg_size,
-                          int mode);
-
-int read_steg_sound_data(HEADER *header, char *msg, size_t msg_size, int mode);
+int wav_stego_decode(HEADER *header, char *msg, size_t msg_size, int mode);
 
 #endif

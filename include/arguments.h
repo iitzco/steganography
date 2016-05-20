@@ -18,8 +18,8 @@ typedef struct {
     char* pass;
 } ARGUMENTS;
 
-void print_arguments(ARGUMENTS* arguments);
+void args_print(ARGUMENTS* arguments);
 
-void parse_arguments(int argc, char** argv, ARGUMENTS* arguments);
+void args_parse(int argc, char** argv, ARGUMENTS* arguments);
 
 #endif

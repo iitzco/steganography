@@ -21,7 +21,7 @@ long get_num_samples(HEADER *header) {
            (header->channels * header->bits_per_sample);
 }
 
-int read_headers(HEADER *header, FILE *ptr) {
+int wav_header_read(HEADER *header, FILE *ptr) {
     int read = 0;
 
     // Read full header from ptr
@@ -104,7 +104,7 @@ int read_headers(HEADER *header, FILE *ptr) {
     return 0;
 }
 
-int write_headers(HEADER *header, FILE *ptr) {
+int wav_header_write(HEADER *header, FILE *ptr) {
     int write = 0;
 
     write = fwrite(&header->native_header, HEADER_SIZE, 1, ptr);
@@ -116,8 +116,8 @@ int write_headers(HEADER *header, FILE *ptr) {
     return 0;
 }
 
-int write_steg_sound_data(HEADER *header, FILE *ptr, char *msg, size_t msg_size,
-                          int mode) {
+int wav_stego_encode(HEADER *header, FILE *ptr, char *msg, size_t msg_size,
+                     int mode) {
     char sample_size = header->bits_per_sample / 8;
     char block_byte_size = 0;
 
@@ -145,7 +145,7 @@ int write_steg_sound_data(HEADER *header, FILE *ptr, char *msg, size_t msg_size,
     return 0;
 }
 
-int read_steg_sound_data(HEADER *header, char *msg, size_t msg_size, int mode) {
+int wav_stego_decode(HEADER *header, char *msg, size_t msg_size, int mode) {
     // TODO this method should read the msg_len also, not recieve it as
     // parameter
 
