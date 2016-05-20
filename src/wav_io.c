@@ -184,7 +184,7 @@ int wav_stego_decode(HEADER *header, FILE *output, Steg mode) {
 
     char sample_for_size[block_byte_size * 4];
     unsigned long length;
-    char *buffer = (char *)malloc(4);
+    char *buffer = (char *)calloc(4,1);
     int read = 0;
 
     read = fread(sample_for_size, block_byte_size, 4, header->ptr);
