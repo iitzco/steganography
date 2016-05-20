@@ -45,29 +45,6 @@ long little_to_big_2_bytes(unsigned char buffer2[]) {
     return buffer2[0] | (buffer2[1]<<8);
 }
 
-char* get_file_path(char *path) {
-
-    char *filename = (char*) malloc(sizeof(char) * 1024);
-
-    if (filename == NULL) {
-      printf("Error in malloc\n");
-      return NULL;
-    }
-
-    // get file path
-    char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL) {
-      
-       strcpy(filename, cwd);
-       
-       strcat(filename, "/");
-       strcat(filename,path);
-       return filename;
-    }
-    return NULL;
-}
-
-
 char* file_to_char_array(FILE *file) {
     long lSize;
     char *buffer;

@@ -20,10 +20,7 @@ int main(int argc, char **argv) {
         printf("Wrong parameters.\n");
         exit(1);
     }
-    char *filename = get_file_path(argv[1]);
-    if (filename==NULL) {
-        exit(1);
-    }
+    char *filename = argv[1];
 
     // open file
 
@@ -39,11 +36,7 @@ int main(int argc, char **argv) {
 
 
     printf("Writing hidden info in samples/dup.wav...\n");
-    filename = get_file_path("samples/dup.wav");
-    if (filename==NULL) {
-        exit(1);
-    }
-    FILE *ptr_write = fopen(filename, "w");
+    FILE *ptr_write = fopen("samples/dup.wav", "w");
 
     int mode = 0;
     if (strcmp("lsb1",argv[2]) == 0){
@@ -67,29 +60,18 @@ int main(int argc, char **argv) {
 
     fclose(ptr);
     free(data);
-    free(filename);
 
     printf("Reading hidden info in samples/dup.wav...\n");
-    filename = get_file_path("samples/dup.wav");
 
-    if (filename==NULL) {
-        exit(1);
-    }
-
-    ptr = fopen(filename, "r");
+    ptr = fopen("samples/dup.wav", "r");
     char *hidden_data = (char *) calloc(data_size + 1, sizeof(char));
 
     read_headers(&header, ptr);
     read_steg_sound_data(&header, hidden_data, data_size, mode);
 
     fclose(ptr);
-    free(filename);
 
-    filename = get_file_path("samples/hidden_file.txt");
-    if (filename==NULL) {
-        exit(1);
-    }
-    ptr = fopen(filename, "w");
+    ptr = fopen("samples/hidden_file.txt", "w");
 
     // Write obtained hidden_data
     int results = fputs(hidden_data, ptr);
@@ -97,7 +79,6 @@ int main(int argc, char **argv) {
       printf("Failed to write\n");
       exit(1);
     }
-    free(filename);
     fclose(ptr);
 
     return 0;
