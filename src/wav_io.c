@@ -195,8 +195,8 @@ int wav_stego_decode(HEADER *header, FILE *output, Steg mode) {
 
     // Then, decode file
 
-    char *sample = (char *)calloc(block_byte_size * BLOCK_SIZE, 1);
-    char *block = (char *)calloc(BLOCK_SIZE, 1);
+    char *sample = NULL;
+    char *block = NULL;
     while (length > BLOCK_SIZE) {
         block = (char *)calloc(BLOCK_SIZE, 1);
         sample = (char *)calloc(block_byte_size * BLOCK_SIZE, 1);
@@ -205,6 +205,8 @@ int wav_stego_decode(HEADER *header, FILE *output, Steg mode) {
                    BLOCK_SIZE, mode);
         fwrite(block, BLOCK_SIZE, 1, output);
         length -= BLOCK_SIZE;
+        free(sample);
+        free(block);
     }
     block = (char *)calloc(BLOCK_SIZE, 1);
     sample = (char *)calloc(block_byte_size * BLOCK_SIZE, 1);
@@ -212,5 +214,7 @@ int wav_stego_decode(HEADER *header, FILE *output, Steg mode) {
     lsb_decode(sample, block_byte_size * length, 0, sample_size, block, length,
                mode);
     read = fwrite(block, 1, length, output);
+    free(sample);
+    free(block);
     return 0;
 }
