@@ -44,7 +44,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
                 if(arguments->mode == EXTRACT)
                 {
                     fprintf(stderr, "ERROR - can't extract and embed at the same time \n");
-                    abort();
+                    exit(1);
                 }
                 arguments->mode = EMBED;
             break;
@@ -53,7 +53,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
                 if(arguments->mode == EMBED)
                 {
                     fprintf(stderr, "ERROR - can't extract and embed at the same time \n");
-                    abort();
+                    exit(1);
                 }
                 arguments->mode = EXTRACT;
             break;
@@ -74,7 +74,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
               if(strlen(optarg) != 4)
               {
                 fprintf(stderr, "ERROR - wrong argument for --steg. Options are: <LSB1|LSB4|LSBE> \n");
-                abort();
+                exit(1);
               }
               if(strcmp(optarg,"LSB1") == 0)
               {
@@ -88,7 +88,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
               }else
               {
                 fprintf(stderr, "ERROR - wrong argument for --steg. Options are: <LSB1|LSB4|LSBE> \n");
-                abort();
+                exit(1);
               }
              break;
             case 'a':
@@ -96,7 +96,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
               if(strlen(optarg) != 6 && strlen(optarg) != 3 )
               {
                 fprintf(stderr, "a ERROR - wrong argument for --a. Options are: <aes128|aes192|aes256|des> %lu\n",strlen(optarg));
-                abort();
+                exit(1);
               }
               if(strcmp(optarg,"aes128") == 0)
               {
@@ -113,7 +113,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
               }else
               {
                 fprintf(stderr, "b ERROR - wrong argument for --a. Options are: <aes128|aes192|aes256|des> %lu\n",strlen(optarg));
-                abort();
+                exit(1);
               }
             break;
             case 'm':
@@ -121,7 +121,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
               if(strlen(optarg) != 3 )
               {
                 fprintf(stderr, "ERROR - wrong argument for --m. Options are: <ecb|cfb|ofb|cbc> \n");
-                abort();
+                exit(1);
               }
               if(strcmp(optarg,"ecb") == 0)
               {
@@ -138,7 +138,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
               }else
               {
                 fprintf(stderr, "ERROR - wrong argument for --m. Options are: <ecb|cfb|ofb|cbc> \n");
-                abort();
+                exit(1);
               }
             break;
 
@@ -153,7 +153,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
 
             default:
                 printf ("DEFAULT with value `%c'\n", c);
-                abort ();
+                exit(1);
             }
     }
   /* Print any remaining command line arguments (not options). */
@@ -163,7 +163,7 @@ void parseArguments (int argc, char **argv, ARGUMENTS * arguments)
         while (optind < argc)
             printf ("%s ", argv[optind++]);
         putchar ('\n');
-        abort();
+        exit(1);
     }
 }
 
