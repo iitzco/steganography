@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     filename = arguments.out_file;
     FILE *ptr_write = fopen(filename, "w");
 
-    filename = get_file_path(arguments.in_file);
+    filename = arguments.in_file;
     FILE *ptr_in_data = fopen(filename, "r");
 
     char* data = file_to_char_array(ptr_in_data);
@@ -54,7 +54,6 @@ int main(int argc, char **argv) {
     fclose(ptr);
     fclose(ptr_in_data);
     fclose(ptr_write);
-    free(filename);
 
     printf("Reading hidden info from %s...\n", arguments.out_file);
     filename = arguments.out_file;
