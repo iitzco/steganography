@@ -35,6 +35,6 @@ int wav_header_write(HEADER *header, FILE *ptr);
 
 int wav_stego_encode(HEADER *header, FILE *ptr, FILE *msg, Steg mode);
 
-int wav_stego_decode(HEADER *header, char *msg, size_t msg_size, Steg mode);
+int wav_stego_decode(HEADER *header, FILE *output, Steg mode);
 
 #endif

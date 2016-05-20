@@ -22,6 +22,17 @@ int embed_data(HEADER * header, ARGUMENTS * arguments) {
     return 0;
 }
 
+int extract_data(HEADER * header, ARGUMENTS * arguments) {
+
+    FILE *ptr = open_file(arguments->p_wavefile, "r");
+    FILE *ptr_write = open_file(arguments->out_file, "w");
+
+    wav_header_read(header, ptr);
+
+    wav_stego_decode(header, ptr_write, arguments->steg);
+
+    return 0;
+}
 
 int main(int argc, char **argv) {
     
@@ -34,6 +45,9 @@ int main(int argc, char **argv) {
     if (arguments.mode == EMBED){
         printf("EMBED\n");
         embed_data(&header, &arguments);
+    }else if(arguments.mode == EXTRACT){
+        printf("EXTRACT\n");
+        extract_data(&header, &arguments);
     }
 
 
