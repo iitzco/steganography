@@ -4,7 +4,7 @@ CC = gcc
 IDIR = ./include
 CFLAGS = -g -Wall -I$(IDIR)
 
-.PHONY: default all clean
+.PHONY: default all clean format
 
 default: $(TARGET)
 all: default
@@ -24,3 +24,7 @@ $(TARGET): $(OBJECTS)
 clean:
 	find . -type f -name '*.o' -delete
 	-rm -f $(TARGET)
+
+format:
+	find . -type f -name '*.c' | xargs clang-format -i
+	find . -type f -name '*.h' | xargs clang-format -i

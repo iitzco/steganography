@@ -1,20 +1,19 @@
-#include "printer.h"
-#include "wav_io.h"
-#include "lsb.h"
-#include "arguments.h"
-#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "arguments.h"
+#include "lsb.h"
+#include "printer.h"
+#include "utils.h"
+#include "wav_io.h"
 
 int main(int argc, char **argv) {
-
     ARGUMENTS arguments;
     HEADER header;
 
     parseArguments(argc, argv, &arguments);
 
-    //Initialize in 0
+    // Initialize in 0
     memset(&header, 0, sizeof(header));
 
     FILE *ptr;
@@ -23,12 +22,12 @@ int main(int argc, char **argv) {
     printf("Opening file %s...\n", arguments.p_wavefile);
     ptr = fopen(filename, "r");
     if (ptr == NULL) {
-       printf("Error opening file\n");
-       exit(1);
+        printf("Error opening file\n");
+        exit(1);
     }
 
     printf("Reading file...\n");
-    read_headers(&header,ptr);
+    read_headers(&header, ptr);
 
     printf("Writing hidden info in %s...\n", arguments.out_file);
     filename = arguments.out_file;
@@ -37,14 +36,14 @@ int main(int argc, char **argv) {
     filename = arguments.in_file;
     FILE *ptr_in_data = fopen(filename, "r");
 
-    char* data = file_to_char_array(ptr_in_data);
+    char *data = file_to_char_array(ptr_in_data);
     int data_size = strlen(data);
 
     int mode = 0;
-    if (arguments.steg == LSB1){
-                mode = LSB1;
-    } else if (arguments.steg == LSB4){
-                mode = LSB4;
+    if (arguments.steg == LSB1) {
+        mode = LSB1;
+    } else if (arguments.steg == LSB4) {
+        mode = LSB4;
     }
 
     write_headers(&header, ptr_write);
@@ -59,7 +58,7 @@ int main(int argc, char **argv) {
     filename = arguments.out_file;
 
     ptr = fopen(filename, "r");
-    char *hidden_msg = (char *) calloc(data_size+1, sizeof(char));
+    char *hidden_msg = (char *)calloc(data_size + 1, sizeof(char));
 
     read_headers(&header, ptr);
 
@@ -68,5 +67,4 @@ int main(int argc, char **argv) {
     printf("\nHidden info:\n%s\n", hidden_msg);
 
     return 0;
-
 }

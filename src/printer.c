@@ -1,11 +1,10 @@
+#include "printer.h"
 #include <stdio.h>
 #include <string.h>
-#include "wav_io.h"
 #include "utils.h"
-#include "printer.h"
+#include "wav_io.h"
 
 void print_all_headers(HEADER *header) {
-
     printf("RIFF HEADER\n");
     printf("%.4s\n", header->riff);
 
@@ -23,11 +22,11 @@ void print_all_headers(HEADER *header) {
 
     char format_name[10] = "";
     if (header->format_type == 1)
-      strcpy(format_name,"PCM");
+        strcpy(format_name, "PCM");
     else if (header->format_type == 6)
-     strcpy(format_name, "A-law");
+        strcpy(format_name, "A-law");
     else if (header->format_type == 7)
-     strcpy(format_name, "Mu-law");
+        strcpy(format_name, "Mu-law");
 
     printf("AUDIO FORMAT CATEGORY (1 for PCM)\n");
     printf("%d (%s)\n", header->format_type, format_name);
@@ -52,6 +51,4 @@ void print_all_headers(HEADER *header) {
 
     printf("DATA SIZE\n");
     printf("%d \n", header->data_size);
-
 }
-
