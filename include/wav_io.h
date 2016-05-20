@@ -4,7 +4,7 @@
 #define WAVPARSER_H
 
 #include <stdio.h>
-#include "lsb.h" 
+#include "lsb.h"
 
 #define HEADER_SIZE 44
 #define BLOCK_SIZE 1024

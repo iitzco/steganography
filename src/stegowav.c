@@ -8,8 +8,7 @@
 #include "utils.h"
 #include "wav_io.h"
 
-int embed_data(HEADER * header, ARGUMENTS * arguments) {
-
+int embed_data(HEADER *header, ARGUMENTS *arguments) {
     FILE *ptr = open_file(arguments->p_wavefile, "r");
     FILE *ptr_write = open_file(arguments->out_file, "w");
     FILE *ptr_in_data = open_file(arguments->in_file, "r");
@@ -22,8 +21,7 @@ int embed_data(HEADER * header, ARGUMENTS * arguments) {
     return 0;
 }
 
-int extract_data(HEADER * header, ARGUMENTS * arguments) {
-
+int extract_data(HEADER *header, ARGUMENTS *arguments) {
     FILE *ptr = open_file(arguments->p_wavefile, "r");
     FILE *ptr_write = open_file(arguments->out_file, "w");
 
@@ -35,22 +33,19 @@ int extract_data(HEADER * header, ARGUMENTS * arguments) {
 }
 
 int main(int argc, char **argv) {
-    
     ARGUMENTS arguments;
     args_parse(argc, argv, &arguments);
 
     HEADER header;
     memset(&header, 0, sizeof(header));
 
-    if (arguments.mode == EMBED){
+    if (arguments.mode == EMBED) {
         printf("EMBED\n");
         embed_data(&header, &arguments);
-    }else if(arguments.mode == EXTRACT){
+    } else if (arguments.mode == EXTRACT) {
         printf("EXTRACT\n");
         extract_data(&header, &arguments);
     }
-
-
 
     /* printf("Reading hidden info from %s...\n", arguments.out_file); */
 

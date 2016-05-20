@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-FILE * open_file(char * file, char * mode){
+FILE *open_file(char *file, char *mode) {
     FILE *ptr = fopen(file, mode);
     if (ptr == NULL) {
         perror(file);
@@ -12,14 +12,13 @@ FILE * open_file(char * file, char * mode){
     return ptr;
 }
 
-unsigned long get_file_size(FILE * file){
+unsigned long get_file_size(FILE *file) {
     unsigned long lSize;
     fseek(file, 0L, SEEK_END);
     lSize = ftell(file);
     rewind(file);
     return lSize;
 }
-
 
 long little_to_big_4_bytes(unsigned char buffer4[]) {
     return buffer4[0] | (buffer4[1] << 8) | (buffer4[2] << 16) |
