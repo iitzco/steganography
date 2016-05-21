@@ -47,21 +47,5 @@ int main(int argc, char **argv) {
         extract_data(&header, &arguments);
     }
 
-    /* printf("Reading hidden info from %s...\n", arguments.out_file); */
-
-    /* FILE *ptr = fopen(arguments.out_file, "r"); */
-    /* if (ptr == NULL) { */
-    /*     perror(arguments.p_wavefile); */
-    /*     exit(1); */
-    /* } */
-
-    /* char *hidden_msg = (char *)calloc(data_size + 1, sizeof(char)); */
-
-    /* wav_header_read(&header, ptr); */
-
-    /* wav_stego_decode(&header, hidden_msg, data_size, mode); */
-
-    /* printf("\nHidden info:\n%s\n", hidden_msg); */
-
     return 0;
 }

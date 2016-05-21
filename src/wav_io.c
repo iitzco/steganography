@@ -130,6 +130,7 @@ int wav_stego_encode(HEADER *header, FILE *ptr, FILE *msg, Steg mode) {
 
     char sample_for_size[block_byte_size * 4];
     unsigned long length = get_file_size(msg);
+    unsigned long backup_length = length;
 
     lsb_encode(sample_for_size, block_byte_size * 4, 0, sample_size,
                (char *)&length, 4, mode);
@@ -158,8 +159,8 @@ int wav_stego_encode(HEADER *header, FILE *ptr, FILE *msg, Steg mode) {
 
     // Finally write rest of file
 
-    int remain =
-        header->data_size - (4 * block_byte_size) - (length * block_byte_size);
+    int remain = header->data_size - (4 * block_byte_size) -
+                 (backup_length * block_byte_size);
     char byte[1];
 
     while (remain-- > 0) {
