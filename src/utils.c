@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -55,4 +56,26 @@ char *file_to_char_array(FILE *file) {
 
     fclose(file);
     return buffer;
+}
+
+void dec_to_num_representation(unsigned long value, unsigned char vec[]) {
+    unsigned char i = 0;
+    unsigned long BASE = 256;
+    while (value > BASE) {
+        vec[i] = (unsigned char)(value % BASE);
+        i++;
+        value /= BASE;
+    }
+    vec[i] = value;
+}
+
+unsigned long num_representation_to_dec(unsigned char vec[], int vec_size) {
+    unsigned char i = 0;
+    unsigned long count = 0;
+    unsigned long BASE = 256;
+    while (i < vec_size) {
+        count += (unsigned int)(vec[i] * pow(BASE, i));
+        i++;
+    }
+    return count;
 }

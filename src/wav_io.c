@@ -129,11 +129,14 @@ int wav_stego_encode(HEADER *header, FILE *ptr, FILE *msg, Steg mode) {
     // First write length
 
     char sample_for_size[block_byte_size * 4];
+    unsigned char *length_representation = (unsigned char *)calloc(4, 1);
     unsigned long length = get_file_size(msg);
+    dec_to_num_representation(length, length_representation);
+
     unsigned long backup_length = length;
 
     lsb_encode(sample_for_size, block_byte_size * 4, 0, sample_size,
-               (char *)&length, 4, mode);
+               (char *)length_representation, 4, mode);
     fwrite(sample_for_size, block_byte_size * 4, 1, ptr);
 
     // The write input file
@@ -184,15 +187,15 @@ int wav_stego_decode(HEADER *header, FILE *output, Steg mode) {
     // First, read length
 
     char sample_for_size[block_byte_size * 4];
+    unsigned char *length_representation = (unsigned char *)calloc(4, 1);
     unsigned long length;
-    char *buffer = (char *)calloc(4, 1);
     int read = 0;
 
     read = fread(sample_for_size, block_byte_size, 4, header->ptr);
-    lsb_decode(sample_for_size, block_byte_size * 4, 0, sample_size, buffer, 4,
-               mode);
+    lsb_decode(sample_for_size, block_byte_size * 4, 0, sample_size,
+               (char *)length_representation, 4, mode);
     // Decoded data is in little endian
-    length = little_to_big_4_bytes((unsigned char *)buffer);
+    length = num_representation_to_dec(length_representation, 4);
 
     // Then, decode file
 
