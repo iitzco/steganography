@@ -147,6 +147,14 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
             case 'w':
                 /* printf("option -w or --pass with value `%s'\n", optarg); */
                 arguments->encryption.password = optarg;
+
+                // Default values
+                if (arguments->encryption.mode == 0) {
+                    arguments->encryption.mode = CBC;
+                }
+                if (arguments->encryption.algorithm == 0) {
+                    arguments->encryption.algorithm = AES128;
+                }
                 break;
 
             case '?':
@@ -163,6 +171,13 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
         fprintf(stderr, "ERROR - unrecognized arguments: ");
         while (optind < argc) printf("%s ", argv[optind++]);
         putchar('\n');
+        exit(1);
+    }
+
+    if (arguments->encryption.password == NULL
+        && (arguments->encryption.mode != NULL
+            || arguments->encryption.algorithm != NULL)) {
+        fprintf(stderr, "ERROR - must send a password when indicating mode or algorithm\n");
         exit(1);
     }
 }
