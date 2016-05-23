@@ -4,8 +4,8 @@
 #include <string.h>
 #include <unistd.h>
 
-FILE *open_file(char *file, char *mode) {
-    FILE *ptr = fopen(file, mode);
+FILE* open_file(char* file, char* mode) {
+    FILE* ptr = fopen(file, mode);
     if (ptr == NULL) {
         perror(file);
         exit(1);
@@ -13,7 +13,7 @@ FILE *open_file(char *file, char *mode) {
     return ptr;
 }
 
-unsigned long get_file_size(FILE *file) {
+unsigned long get_file_size(FILE* file) {
     unsigned long lSize;
     fseek(file, 0L, SEEK_END);
     lSize = ftell(file);
@@ -30,9 +30,9 @@ long little_to_big_2_bytes(unsigned char buffer2[]) {
     return buffer2[0] | (buffer2[1] << 8);
 }
 
-char *file_to_char_array(FILE *file) {
+char* file_to_char_array(FILE* file) {
     long lSize;
-    char *buffer;
+    char* buffer;
 
     fseek(file, 0L, SEEK_END);
     lSize = ftell(file);

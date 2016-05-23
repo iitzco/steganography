@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "wav_io.h"
 
-void print_all_headers(HEADER *header) {
+void print_all_headers(WavHeader* header) {
     printf("RIFF HEADER\n");
     printf("%.4s\n", header->riff);
 

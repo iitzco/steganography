@@ -1,8 +1,8 @@
 TARGET = stegowav
 LIBS = -lm
 CC = gcc
-IDIR = ./include
-CFLAGS = -g -Wall -I$(IDIR)
+IDIRS = -I./include -I/usr/local/opt/openssl/include
+CFLAGS = -g -Wall $(IDIRS)
 LDFLAGS = -lcrypto
 
 .PHONY: default all clean format

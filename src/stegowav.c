@@ -3,15 +3,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include "arguments.h"
+#include "encrypt.h"
 #include "lsb.h"
 #include "printer.h"
 #include "utils.h"
 #include "wav_io.h"
 
-int embed_data(HEADER *header, ARGUMENTS *arguments) {
-    FILE *ptr = open_file(arguments->p_wavefile, "r");
-    FILE *ptr_write = open_file(arguments->out_file, "w");
-    FILE *ptr_in_data = open_file(arguments->in_file, "r");
+int embed_data(WavHeader* header, Arguments* arguments) {
+    FILE* ptr = open_file(arguments->p_wavefile, "r");
+    FILE* ptr_write = open_file(arguments->out_file, "w");
+    FILE* ptr_in_data = open_file(arguments->in_file, "r");
 
     wav_header_read(header, ptr);
     wav_header_write(header, ptr_write);
@@ -21,9 +22,9 @@ int embed_data(HEADER *header, ARGUMENTS *arguments) {
     return 0;
 }
 
-int extract_data(HEADER *header, ARGUMENTS *arguments) {
-    FILE *ptr = open_file(arguments->p_wavefile, "r");
-    FILE *ptr_write = open_file(arguments->out_file, "w");
+int extract_data(WavHeader* header, Arguments* arguments) {
+    FILE* ptr = open_file(arguments->p_wavefile, "r");
+    FILE* ptr_write = open_file(arguments->out_file, "w");
 
     wav_header_read(header, ptr);
 
@@ -32,11 +33,11 @@ int extract_data(HEADER *header, ARGUMENTS *arguments) {
     return 0;
 }
 
-int main(int argc, char **argv) {
-    ARGUMENTS arguments;
+int main(int argc, char** argv) {
+    Arguments arguments;
     args_parse(argc, argv, &arguments);
 
-    HEADER header;
+    WavHeader header;
     memset(&header, 0, sizeof(header));
 
     if (arguments.mode == EMBED) {

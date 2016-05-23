@@ -3,23 +3,30 @@
 
 #include "lsb.h"
 
-typedef enum t_mode { MODE_NONE, EMBED, EXTRACT } Mode;
-typedef enum t_a { A_NONE, AES128, AES192, AES256, DES } A;
-typedef enum t_m { M_NONE, ECB, CFB, OFB, CBC } M;
+typedef enum { MODE_NONE, EMBED, EXTRACT } ProgramMode;
+typedef enum { A_NONE, AES128, AES192, AES256, DES } CipherAlgorithm;
+typedef enum { M_NONE, ECB, CFB, OFB, CBC } CipherMode;
+
+#define ALGO_MAX 5
+#define MODE_MAX 5
 
 typedef struct {
-    Mode mode;
+    CipherAlgorithm algorithm;
+    CipherMode mode;
+    char* password;
+} Encryption;
+
+typedef struct {
+    ProgramMode mode;
     char* in_file;
     char* p_wavefile;
     char* out_file;
-    Steg steg;
-    A a;
-    M m;
-    char* pass;
-} ARGUMENTS;
+    StegMode steg;
+    Encryption encryption;
+} Arguments;
 
-void args_print(ARGUMENTS* arguments);
+void args_print(Arguments* arguments);
 
-void args_parse(int argc, char** argv, ARGUMENTS* arguments);
+void args_parse(int argc, char** argv, Arguments* arguments);
 
 #endif

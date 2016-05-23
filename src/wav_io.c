@@ -12,16 +12,16 @@
 unsigned char buffer4[4];
 unsigned char buffer2[2];
 
-long get_size_of_each_sample(HEADER *header) {
+long get_size_of_each_sample(WavHeader* header) {
     return (header->channels * header->bits_per_sample) / 8;
 }
 
-long get_num_samples(HEADER *header) {
+long get_num_samples(WavHeader* header) {
     return (8 * header->data_size) /
            (header->channels * header->bits_per_sample);
 }
 
-int wav_header_read(HEADER *header, FILE *ptr) {
+int wav_header_read(WavHeader* header, FILE* ptr) {
     int read = 0;
 
     // Read full header from ptr
@@ -104,7 +104,7 @@ int wav_header_read(HEADER *header, FILE *ptr) {
     return 0;
 }
 
-int wav_header_write(HEADER *header, FILE *ptr) {
+int wav_header_write(WavHeader* header, FILE* ptr) {
     int write = 0;
 
     write = fwrite(&header->native_header, HEADER_SIZE, 1, ptr);
@@ -116,7 +116,7 @@ int wav_header_write(HEADER *header, FILE *ptr) {
     return 0;
 }
 
-int wav_stego_encode(HEADER *header, FILE *ptr, FILE *msg, Steg mode) {
+int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode) {
     char sample_size = header->bits_per_sample / 8;
     char block_byte_size = 0;
 
@@ -129,20 +129,20 @@ int wav_stego_encode(HEADER *header, FILE *ptr, FILE *msg, Steg mode) {
     // First write length
 
     char sample_for_size[block_byte_size * 4];
-    unsigned char *length_representation = (unsigned char *)calloc(4, 1);
+    unsigned char* length_representation = (unsigned char*)calloc(4, 1);
     unsigned long length = get_file_size(msg);
     dec_to_num_representation(length, length_representation);
 
     unsigned long backup_length = length;
 
     lsb_encode(sample_for_size, block_byte_size * 4, 0, sample_size,
-               (char *)length_representation, 4, mode);
+               (char*)length_representation, 4, mode);
     fwrite(sample_for_size, block_byte_size * 4, 1, ptr);
 
     // The write input file
 
     char sample[block_byte_size * BLOCK_SIZE];
-    char *block = (char *)calloc(BLOCK_SIZE, 1);
+    char* block = (char*)calloc(BLOCK_SIZE, 1);
     int read = 0;
     while (length > BLOCK_SIZE) {
         fread(block, BLOCK_SIZE, 1, msg);
@@ -174,7 +174,7 @@ int wav_stego_encode(HEADER *header, FILE *ptr, FILE *msg, Steg mode) {
     return 0;
 }
 
-int wav_stego_decode(HEADER *header, FILE *output, Steg mode) {
+int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode) {
     char sample_size = header->bits_per_sample / 8;
     int block_byte_size = 0;
 
@@ -187,23 +187,23 @@ int wav_stego_decode(HEADER *header, FILE *output, Steg mode) {
     // First, read length
 
     char sample_for_size[block_byte_size * 4];
-    unsigned char *length_representation = (unsigned char *)calloc(4, 1);
+    unsigned char* length_representation = (unsigned char*)calloc(4, 1);
     unsigned long length;
     int read = 0;
 
     read = fread(sample_for_size, block_byte_size, 4, header->ptr);
     lsb_decode(sample_for_size, block_byte_size * 4, 0, sample_size,
-               (char *)length_representation, 4, mode);
+               (char*)length_representation, 4, mode);
     // Decoded data is in little endian
     length = num_representation_to_dec(length_representation, 4);
 
     // Then, decode file
 
-    char *sample = NULL;
-    char *block = NULL;
+    char* sample = NULL;
+    char* block = NULL;
     while (length > BLOCK_SIZE) {
-        block = (char *)calloc(BLOCK_SIZE, 1);
-        sample = (char *)calloc(block_byte_size * BLOCK_SIZE, 1);
+        block = (char*)calloc(BLOCK_SIZE, 1);
+        sample = (char*)calloc(block_byte_size * BLOCK_SIZE, 1);
         read = fread(sample, block_byte_size, BLOCK_SIZE, header->ptr);
         lsb_decode(sample, block_byte_size * BLOCK_SIZE, 0, sample_size, block,
                    BLOCK_SIZE, mode);
@@ -212,8 +212,8 @@ int wav_stego_decode(HEADER *header, FILE *output, Steg mode) {
         free(sample);
         free(block);
     }
-    block = (char *)calloc(BLOCK_SIZE, 1);
-    sample = (char *)calloc(block_byte_size * BLOCK_SIZE, 1);
+    block = (char*)calloc(BLOCK_SIZE, 1);
+    sample = (char*)calloc(block_byte_size * BLOCK_SIZE, 1);
     read = fread(sample, block_byte_size, length, header->ptr);
     lsb_decode(sample, block_byte_size * length, 0, sample_size, block, length,
                mode);

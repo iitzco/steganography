@@ -19,7 +19,7 @@ void usage() {
            "[optional] --pass password \n");
 }
 
-void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
+void args_parse(int argc, char** argv, Arguments* arguments) {
     memset(arguments, 0, sizeof(*arguments));
     int c;
     static struct option long_options[] = {{"help", no_argument, 0, 'h'},
@@ -105,13 +105,13 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
                     exit(1);
                 }
                 if (strcmp(optarg, "aes128") == 0) {
-                    arguments->a = AES128;
+                    arguments->encryption.algorithm = AES128;
                 } else if (strcmp(optarg, "aes192") == 0) {
-                    arguments->a = AES192;
+                    arguments->encryption.algorithm = AES192;
                 } else if (strcmp(optarg, "aes256") == 0) {
-                    arguments->a = AES256;
+                    arguments->encryption.algorithm = AES256;
                 } else if (strcmp(optarg, "des") == 0) {
-                    arguments->a = DES;
+                    arguments->encryption.algorithm = DES;
                 } else {
                     fprintf(stderr,
                             "b ERROR - wrong argument for --a. Options are: "
@@ -129,13 +129,13 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
                     exit(1);
                 }
                 if (strcmp(optarg, "ecb") == 0) {
-                    arguments->m = ECB;
+                    arguments->encryption.mode = ECB;
                 } else if (strcmp(optarg, "cfb") == 0) {
-                    arguments->m = CFB;
+                    arguments->encryption.mode = CFB;
                 } else if (strcmp(optarg, "ofb") == 0) {
-                    arguments->m = OFB;
+                    arguments->encryption.mode = OFB;
                 } else if (strcmp(optarg, "cbc") == 0) {
-                    arguments->m = CBC;
+                    arguments->encryption.mode = CBC;
                 } else {
                     fprintf(stderr,
                             "ERROR - wrong argument for --m. Options are: "
@@ -146,7 +146,7 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
 
             case 'w':
                 /* printf("option -w or --pass with value `%s'\n", optarg); */
-                arguments->pass = optarg;
+                arguments->encryption.password = optarg;
                 break;
 
             case '?':
@@ -167,13 +167,13 @@ void args_parse(int argc, char** argv, ARGUMENTS* arguments) {
     }
 }
 
-void args_print(ARGUMENTS* arguments) {
+void args_print(Arguments* arguments) {
     printf("MODE %u\n", arguments->mode);
     printf("IN %s\n", arguments->in_file);
     printf("P_WAVEFILE  %s\n", arguments->p_wavefile);
     printf("OUT %s\n", arguments->out_file);
     printf("STEG %u\n", arguments->steg);
-    printf("A %u\n", arguments->a);
-    printf("M %u\n", arguments->m);
-    printf("PASS %s\n", arguments->pass);
+    printf("A %u\n", arguments->encryption.algorithm);
+    printf("M %u\n", arguments->encryption.mode);
+    printf("PASS %s\n", arguments->encryption.password);
 }

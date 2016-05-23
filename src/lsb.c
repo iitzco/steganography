@@ -9,8 +9,8 @@ typedef struct {
 static const lsb_params_t _LSB = {.mask = 0x01, .ioff = 7, .doff = 1};
 static const lsb_params_t _LSB4 = {.mask = 0x0F, .ioff = 4, .doff = 4};
 
-void _lsb_encode(lsb_params_t params, char *carrier, size_t carrier_size,
-                 size_t offset, size_t chunk_size, char *msg, size_t msg_size) {
+void _lsb_encode(lsb_params_t params, char* carrier, size_t carrier_size,
+                 size_t offset, size_t chunk_size, char* msg, size_t msg_size) {
     char mask = params.mask;  // change to 0x07
     char off = params.ioff;
 
@@ -29,8 +29,8 @@ void _lsb_encode(lsb_params_t params, char *carrier, size_t carrier_size,
     }
 }
 
-void _lsb_decode(lsb_params_t params, char *carrier, size_t carrier_size,
-                 size_t offset, size_t chunk_size, char *msg, size_t msg_size) {
+void _lsb_decode(lsb_params_t params, char* carrier, size_t carrier_size,
+                 size_t offset, size_t chunk_size, char* msg, size_t msg_size) {
     char mask = params.mask;
     char off = params.ioff;
 
@@ -47,8 +47,8 @@ void _lsb_decode(lsb_params_t params, char *carrier, size_t carrier_size,
     }
 }
 
-void lsb_encode(char *carrier, size_t carrier_size, size_t offset,
-                size_t chunk_size, char *msg, size_t msg_size, Steg mode) {
+void lsb_encode(char* carrier, size_t carrier_size, size_t offset,
+                size_t chunk_size, char* msg, size_t msg_size, StegMode mode) {
     if (mode == LSB1) {
         _lsb_encode(_LSB, carrier, carrier_size, offset, chunk_size, msg,
                     msg_size);
@@ -58,8 +58,8 @@ void lsb_encode(char *carrier, size_t carrier_size, size_t offset,
     }
 }
 
-void lsb_decode(char *carrier, size_t carrier_size, size_t offset,
-                size_t chunk_size, char *msg, size_t msg_size, Steg mode) {
+void lsb_decode(char* carrier, size_t carrier_size, size_t offset,
+                size_t chunk_size, char* msg, size_t msg_size, StegMode mode) {
     if (mode == LSB1) {
         _lsb_decode(_LSB, carrier, carrier_size, offset, chunk_size, msg,
                     msg_size);

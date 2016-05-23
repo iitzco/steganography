@@ -3,13 +3,10 @@
 
 #include "arguments.h"
 
-typedef A encrypt_cipher;
-typedef M encrypt_mode;
-
-char* encrypt(char* data, encrypt_cipher cipher, encrypt_mode mode,
+char* encrypt(char* data, CipherAlgorithm algorithm, CipherMode mode,
               char* password);
 
-char* decrypt(char* data, encrypt_cipher cipher, encrypt_mode mode,
+char* decrypt(char* data, CipherAlgorithm algorithm, CipherMode mode,
               char* password);
 
 #endif
