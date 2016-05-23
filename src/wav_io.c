@@ -131,7 +131,7 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, Enc
     char sample_for_size[block_byte_size * 4];
     unsigned char* length_representation = (unsigned char*)calloc(4, 1);
     unsigned long length = get_file_size(msg);
-    dec_to_num_representation(length, length_representation);
+    dec_to_num_representation(length, length_representation, 4);
 
     unsigned long backup_length = length;
 

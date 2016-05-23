@@ -58,15 +58,15 @@ char* file_to_char_array(FILE* file) {
     return buffer;
 }
 
-void dec_to_num_representation(unsigned long value, unsigned char vec[]) {
+void dec_to_num_representation(unsigned long value, unsigned char vec[], int vec_size) {
     unsigned char i = 0;
     unsigned long BASE = 256;
     while (value > BASE) {
-        vec[i] = (unsigned char)(value % BASE);
+        vec[vec_size - i - 1] = (unsigned char)(value % BASE);
         i++;
         value /= BASE;
     }
-    vec[i] = value;
+    vec[vec_size - i - 1] = value;
 }
 
 unsigned long num_representation_to_dec(unsigned char vec[], int vec_size) {
@@ -74,7 +74,7 @@ unsigned long num_representation_to_dec(unsigned char vec[], int vec_size) {
     unsigned long count = 0;
     unsigned long BASE = 256;
     while (i < vec_size) {
-        count += (unsigned int)(vec[i] * pow(BASE, i));
+        count += (unsigned int)(vec[i] * pow(BASE, vec_size - i - 1));
         i++;
     }
     return count;
