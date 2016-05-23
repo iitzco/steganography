@@ -17,7 +17,7 @@ int embed_data(WavHeader* header, Arguments* arguments) {
     wav_header_read(header, ptr);
     wav_header_write(header, ptr_write);
 
-    wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg);
+    wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, arguments->encryption);
 
     return 0;
 }
@@ -28,7 +28,7 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
     wav_header_read(header, ptr);
 
-    wav_stego_decode(header, ptr_write, arguments->steg);
+    wav_stego_decode(header, ptr_write, arguments->steg, arguments->encryption);
 
     return 0;
 }

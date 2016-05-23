@@ -116,7 +116,7 @@ int wav_header_write(WavHeader* header, FILE* ptr) {
     return 0;
 }
 
-int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode) {
+int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, Encryption encryption) {
     char sample_size = header->bits_per_sample / 8;
     char block_byte_size = 0;
 
@@ -174,7 +174,7 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode) {
     return 0;
 }
 
-int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode) {
+int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, Encryption encryption) {
     char sample_size = header->bits_per_sample / 8;
     int block_byte_size = 0;
 

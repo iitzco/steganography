@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include "lsb.h"
+#include "arguments.h"
 
 #define HEADER_SIZE 44
 #define BLOCK_SIZE 1024
@@ -33,8 +34,8 @@ int wav_header_read(WavHeader* header, FILE* ptr);
 
 int wav_header_write(WavHeader* header, FILE* ptr);
 
-int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode);
+int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, Encryption encryption);
 
-int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode);
+int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, Encryption encryption);
 
 #endif
