@@ -3,10 +3,10 @@
 
 #include "arguments.h"
 
-char* encrypt(char* data, CipherAlgorithm algorithm, CipherMode mode,
-              char* password);
+int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len,
+                   char *ciphertext);
 
-char* decrypt(char* data, CipherAlgorithm algorithm, CipherMode mode,
-              char* password);
+int crypto_decrypt(Encryption *params, char *ciphertext, size_t ciphertext_len,
+                   char *decryptedtext);
 
 #endif
