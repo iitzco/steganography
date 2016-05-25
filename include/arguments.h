@@ -3,6 +3,8 @@
 
 #include "lsb.h"
 
+#define STEGOWAV_VERSION_TEXT "1.0"
+
 typedef enum { MODE_NONE, EMBED, EXTRACT } ProgramMode;
 typedef enum { A_NONE, AES128, AES192, AES256, DES } CipherAlgorithm;
 typedef enum { M_NONE, ECB, CFB, OFB, CBC } CipherMode;

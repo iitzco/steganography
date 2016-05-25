@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <openssl/opensslv.h>
 
 void usage() {
     printf("%s",
@@ -19,10 +20,16 @@ void usage() {
            "[optional] --pass password \n");
 }
 
+void version() {
+    printf("stegowav version %s\n", STEGOWAV_VERSION_TEXT);
+    printf("built with %s\n", OPENSSL_VERSION_TEXT);
+}
+
 void args_parse(int argc, char** argv, Arguments* arguments) {
     memset(arguments, 0, sizeof(*arguments));
     int c;
     static struct option long_options[] = {{"help", no_argument, 0, 'h'},
+                                           {"version", no_argument, 0, 'v'},
                                            {"embed", no_argument, 0, 'e'},
                                            {"extract", no_argument, 0, 'x'},
                                            {"in", required_argument, 0, 'i'},
@@ -35,11 +42,15 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
                                            {0, 0, 0, 0}};
     /* getopt_long stores the option index here. */
     int option_index = 0;
-    while ((c = getopt_long(argc, argv, "h:e:x:i:p:o:s:a:m:w:", long_options,
+    while ((c = getopt_long(argc, argv, "hve:x:i:p:o:s:a:m:w:", long_options,
                             &option_index)) != -1) {
         switch (c) {
             case 'h':
                 usage();
+                exit(0);
+                break;
+            case 'v':
+                version();
                 exit(0);
                 break;
             case 'e':
