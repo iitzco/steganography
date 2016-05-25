@@ -40,8 +40,9 @@ int crypto_get_cipher_nid(CipherAlgorithm algo, CipherMode mode) {
     return nid;
 }
 
-int crypto_get_key(char *password, char *key) {
-    PKCS5_PBKDF2_HMAC_SHA1(password, strlen(password), NULL, 0, 1000, 32, key);
+void crypto_get_key(char *password, unsigned char *key) {
+    if (PKCS5_PBKDF2_HMAC_SHA1(password, strlen(password), NULL, 0, 1000, 32, key) != 1)
+        crypto_handle_error();
 }
 
 int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len,
@@ -55,17 +56,17 @@ int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len,
     if (!ctx) crypto_handle_error();
 
     int nid = crypto_get_cipher_nid(params->algorithm, params->mode);
-    EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
+    const EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
 
     if (EVP_EncryptInit_ex(ctx, cipher, NULL, key, iv) != 1)
         crypto_handle_error();
 
-    if (EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len) != 1)
+    if (EVP_EncryptUpdate(ctx, (unsigned char *)ciphertext, &len, (unsigned char *)plaintext, plaintext_len) != 1)
         crypto_handle_error();
 
     ciphertext_len = len;
 
-    if (EVP_EncryptFinal_ex(ctx, ciphertext + len, &len) != 1)
+    if (EVP_EncryptFinal_ex(ctx, (unsigned char *)ciphertext + len, &len) != 1)
         crypto_handle_error();
 
     ciphertext_len += len;
@@ -86,13 +87,13 @@ int crypto_decrypt(Encryption *params, char *ciphertext, size_t ciphertext_len,
     if (!ctx) crypto_handle_error();
 
     int nid = crypto_get_cipher_nid(params->algorithm, params->mode);
-    EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
+    const EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
 
     if (EVP_DecryptInit_ex(ctx, cipher, NULL, key, iv) != 1)
         crypto_handle_error();
 
-    if (EVP_DecryptUpdate(ctx, decryptedtext, &len,
-                      (const unsigned char *)ciphertext, ciphertext_len) != 1)
+    if (EVP_DecryptUpdate(ctx, (unsigned char *)decryptedtext, &len,
+                      (unsigned char *)ciphertext, ciphertext_len) != 1)
         crypto_handle_error();
 
     decryptedtext_len = len;

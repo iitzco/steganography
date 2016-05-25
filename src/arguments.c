@@ -186,8 +186,8 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
     }
 
     if (arguments->encryption.password == NULL
-        && (arguments->encryption.mode != NULL
-            || arguments->encryption.algorithm != NULL)) {
+        && (arguments->encryption.mode != M_NONE
+            || arguments->encryption.algorithm != A_NONE)) {
         fprintf(stderr, "ERROR - must send a password when indicating mode or algorithm\n");
         exit(1);
     }
