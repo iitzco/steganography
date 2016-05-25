@@ -8,13 +8,13 @@
 /* A 128 bit IV */
 unsigned char *iv = (unsigned char *)"0156789012678901";
 
-void crypto_init(void) {
+void crypto_setup(void) {
     ERR_load_crypto_strings();
     OpenSSL_add_all_algorithms();
     OPENSSL_config(NULL);
 }
 
-void crypto_cleanup(void) {
+void crypto_teardown(void) {
     EVP_cleanup();
     ERR_free_strings();
 }
@@ -130,7 +130,7 @@ int cryptomain(void) {
     int decryptedtext_len, ciphertext_len;
     int plaintext_len = strlen(plaintext);
 
-    crypto_init();
+    crypto_setup();
 
     ciphertext_len = crypto_encrypt(&params, plaintext, plaintext_len,
 ciphertext);
@@ -139,7 +139,7 @@ decryptedtext);
 
     printf("%s\n", decryptedtext);
 
-    crypto_cleanup();
+    crypto_teardown();
 
     return 0;
 }
