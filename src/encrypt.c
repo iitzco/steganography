@@ -19,7 +19,7 @@ void crypto_teardown(void) {
     ERR_free_strings();
 }
 
-void crypto_error_handler(void) {
+void crypto_handle_error(void) {
     ERR_print_errors_fp(stderr);
     exit(1);
 }
@@ -73,15 +73,22 @@ int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len,
     crypto_get_key(params->password, key);
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    if (!ctx) crypto_handle_error();
 
     int nid = crypto_get_cipher_nid(params->algorithm, params->mode);
     EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
 
-    EVP_EncryptInit_ex(ctx, cipher, NULL, key, iv);
-    EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len);
+    if (EVP_EncryptInit_ex(ctx, cipher, NULL, key, iv) != 1)
+        crypto_handle_error();
+
+    if (EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len) != 1)
+        crypto_handle_error();
+
     ciphertext_len = len;
 
-    EVP_EncryptFinal_ex(ctx, ciphertext + len, &len);
+    if (EVP_EncryptFinal_ex(ctx, ciphertext + len, &len) != 1)
+        crypto_handle_error();
+
     ciphertext_len += len;
 
     EVP_CIPHER_CTX_free(ctx);
@@ -97,17 +104,23 @@ int crypto_decrypt(Encryption *params, char *ciphertext, size_t ciphertext_len,
     crypto_get_key(params->password, key);
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    if (!ctx) crypto_handle_error();
 
     int nid = crypto_get_cipher_nid(params->algorithm, params->mode);
     EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
 
-    EVP_DecryptInit_ex(ctx, cipher, NULL, key, iv);
+    if (EVP_DecryptInit_ex(ctx, cipher, NULL, key, iv) != 1)
+        crypto_handle_error();
 
-    EVP_DecryptUpdate(ctx, decryptedtext, &len,
-                      (const unsigned char *)ciphertext, ciphertext_len);
+    if (EVP_DecryptUpdate(ctx, decryptedtext, &len,
+                      (const unsigned char *)ciphertext, ciphertext_len) != 1)
+        crypto_handle_error();
+
     decryptedtext_len = len;
 
-    EVP_DecryptFinal_ex(ctx, (unsigned char *)decryptedtext + len, &len);
+    if (EVP_DecryptFinal_ex(ctx, (unsigned char *)decryptedtext + len, &len) != 1)
+        crypto_handle_error();
+
     decryptedtext_len += len;
 
     EVP_CIPHER_CTX_free(ctx);
@@ -119,7 +132,7 @@ int crypto_decrypt(Encryption *params, char *ciphertext, size_t ciphertext_len,
 }
 
 /*
-int cryptomain(void) {
+int main(void) {
     char* plaintext = "The quick brown fox jumps over the lazy dog";
     Encryption params = { .algorithm = AES256, .mode = CBC, .password = "123456"
 };
