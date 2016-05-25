@@ -7,17 +7,20 @@
 
 void usage() {
     printf("%s",
-           "Usage:\n"
-           "--embed  OR --extract  to indicate mode\n"
-           "[embed mode only] --in  file to be hidden \n"
-           "--p  WAVE file to carry the message\n"
-           "--out output file.\n"
-           "--steg <LSB1|LSB4|LSBE> algorithm to be used\n"
-
-           "[optional] --a <aes128|aes192|aes256|des> encryption "
-           "algorithm\n"
-           "[optional] --m <ecb|cfb|ofb|cbc> encryption mode \n"
-           "[optional] --pass password \n");
+           "Usage: stegowav [arguments]\n\n"
+           "Arguments:\n"
+           "  -e, --embed    embed mode\n"
+           "  -x, --extract  extract mode\n"
+           "  -i, --in       input fide\n"
+           "  -p             WAVE carrier file\n"
+           "  -o, --out      output file\n"
+           "  -s, --steg     steganography algorithm [optional]\n"
+           "                 <LSB1|LSB4|LSBE>\n"
+           "  -a             encryption algorithm [optional]\n"
+           "                 <aes128|aes192|aes256|des>\n"
+           "  -m             encryption cipher mode [optional]\n"
+           "                 <ecb|cfb|ofb|cbc>\n"
+           "  --pass         encryption password [optional]\n");
 }
 
 void version() {
@@ -36,8 +39,8 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
                                            {"p", required_argument, 0, 'p'},
                                            {"out", required_argument, 0, 'o'},
                                            {"steg", required_argument, 0, 's'},
-                                           {"a", required_argument, 0, 'a'},
-                                           {"m", required_argument, 0, 'm'},
+                                           {"alg", required_argument, 0, 'a'},
+                                           {"mod", required_argument, 0, 'm'},
                                            {"pass", required_argument, 0, 'w'},
                                            {0, 0, 0, 0}};
     /* getopt_long stores the option index here. */

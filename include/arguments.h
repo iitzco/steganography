@@ -27,6 +27,8 @@ typedef struct {
     Encryption encryption;
 } Arguments;
 
+void usage(void);
+
 void args_print(Arguments* arguments);
 
 void args_parse(int argc, char** argv, Arguments* arguments);

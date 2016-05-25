@@ -41,11 +41,11 @@ int main(int argc, char** argv) {
     memset(&header, 0, sizeof(header));
 
     if (arguments.mode == EMBED) {
-        printf("EMBED\n");
         embed_data(&header, &arguments);
     } else if (arguments.mode == EXTRACT) {
-        printf("EXTRACT\n");
         extract_data(&header, &arguments);
+    } else {
+        usage();
     }
 
     return 0;
