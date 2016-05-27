@@ -17,7 +17,9 @@ int embed_data(WavHeader* header, Arguments* arguments) {
     wav_header_read(header, ptr);
     wav_header_write(header, ptr_write);
 
-    wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg);
+    char* ext = get_filename_ext(arguments->in_file);
+    wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, ext);
+    printf("Encoding %s\n", ext);
 
     return 0;
 }
@@ -28,8 +30,10 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
     wav_header_read(header, ptr);
 
-    wav_stego_decode(header, ptr_write, arguments->steg);
+    char* ext = (char*)calloc(MAX_EXTENSION_SIZE, 1);
+    wav_stego_decode(header, ptr_write, arguments->steg, ext);
 
+    rename_file_with_extension(arguments->out_file, ext);
     return 0;
 }
 

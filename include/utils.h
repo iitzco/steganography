@@ -1,6 +1,10 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+char* get_filename_ext(const char* filename);
+
+int rename_file_with_extension(char* filename, char* ext);
+
 FILE* open_file(char* file, char* mode);
 
 unsigned long get_file_size(FILE* file);

@@ -3,6 +3,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <wav_io.h>
+
+int rename_file_with_extension(char* filename, char* ext) {
+    char* file_with_ext = malloc(strlen(filename) + MAX_EXTENSION_SIZE + 1);
+    strcpy(file_with_ext, filename);
+    strcat(file_with_ext, ".");
+    strcat(file_with_ext, ext);
+    rename(filename, file_with_ext);
+    printf("Saving %s\n", file_with_ext);
+    return 0;
+}
+
+char* get_filename_ext(const char* filename) {
+    char* dot = strrchr(filename, '.');
+    if (!dot || dot == filename) return "";
+    return dot + 1;
+}
 
 FILE* open_file(char* file, char* mode) {
     FILE* ptr = fopen(file, mode);
@@ -22,13 +39,10 @@ unsigned long get_file_size(FILE* file) {
 }
 
 long little_to_big_4_bytes(unsigned char buffer4[]) {
-    return buffer4[0] | (buffer4[1] << 8) | (buffer4[2] << 16) |
-           (buffer4[3] << 24);
+    return buffer4[0] | (buffer4[1] << 8) | (buffer4[2] << 16) | (buffer4[3] << 24);
 }
 
-long little_to_big_2_bytes(unsigned char buffer2[]) {
-    return buffer2[0] | (buffer2[1] << 8);
-}
+long little_to_big_2_bytes(unsigned char buffer2[]) { return buffer2[0] | (buffer2[1] << 8); }
 
 char* file_to_char_array(FILE* file) {
     long lSize;

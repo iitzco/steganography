@@ -1,9 +1,9 @@
 #include "arguments.h"
 #include <getopt.h>
+#include <openssl/opensslv.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
-#include <openssl/opensslv.h>
 
 void usage() {
     printf("%s",
@@ -31,22 +31,17 @@ void version() {
 void args_parse(int argc, char** argv, Arguments* arguments) {
     memset(arguments, 0, sizeof(*arguments));
     int c;
-    static struct option long_options[] = {{"help", no_argument, 0, 'h'},
-                                           {"version", no_argument, 0, 'v'},
-                                           {"embed", no_argument, 0, 'e'},
-                                           {"extract", no_argument, 0, 'x'},
-                                           {"in", required_argument, 0, 'i'},
-                                           {"p", required_argument, 0, 'p'},
-                                           {"out", required_argument, 0, 'o'},
-                                           {"steg", required_argument, 0, 's'},
-                                           {"alg", required_argument, 0, 'a'},
-                                           {"mod", required_argument, 0, 'm'},
-                                           {"pass", required_argument, 0, 'w'},
-                                           {0, 0, 0, 0}};
+    static struct option long_options[] = {
+        {"help", no_argument, 0, 'h'},       {"version", no_argument, 0, 'v'},
+        {"embed", no_argument, 0, 'e'},      {"extract", no_argument, 0, 'x'},
+        {"in", required_argument, 0, 'i'},   {"p", required_argument, 0, 'p'},
+        {"out", required_argument, 0, 'o'},  {"steg", required_argument, 0, 's'},
+        {"alg", required_argument, 0, 'a'},  {"mod", required_argument, 0, 'm'},
+        {"pass", required_argument, 0, 'w'}, {0, 0, 0, 0}};
     /* getopt_long stores the option index here. */
     int option_index = 0;
-    while ((c = getopt_long(argc, argv, "hve:x:i:p:o:s:a:m:w:", long_options,
-                            &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hve:x:i:p:o:s:a:m:w:", long_options, &option_index)) !=
+           -1) {
         switch (c) {
             case 'h':
                 usage();
@@ -59,9 +54,7 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
             case 'e':
                 /* puts ("option -e or --embed"); */
                 if (arguments->mode == EXTRACT) {
-                    fprintf(
-                        stderr,
-                        "ERROR - can't extract and embed at the same time \n");
+                    fprintf(stderr, "ERROR - can't extract and embed at the same time \n");
                     exit(1);
                 }
                 arguments->mode = EMBED;
@@ -69,9 +62,7 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
             case 'x':
                 /* puts("option -x or --extract"); */
                 if (arguments->mode == EMBED) {
-                    fprintf(
-                        stderr,
-                        "ERROR - can't extract and embed at the same time \n");
+                    fprintf(stderr, "ERROR - can't extract and embed at the same time \n");
                     exit(1);
                 }
                 arguments->mode = EXTRACT;
@@ -188,9 +179,8 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
         exit(1);
     }
 
-    if (arguments->encryption.password == NULL
-        && (arguments->encryption.mode != M_NONE
-            || arguments->encryption.algorithm != A_NONE)) {
+    if (arguments->encryption.password == NULL &&
+        (arguments->encryption.mode != M_NONE || arguments->encryption.algorithm != A_NONE)) {
         fprintf(stderr, "ERROR - must send a password when indicating mode or algorithm\n");
         exit(1);
     }

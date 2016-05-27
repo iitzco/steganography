@@ -17,8 +17,7 @@ long get_size_of_each_sample(WavHeader* header) {
 }
 
 long get_num_samples(WavHeader* header) {
-    return (8 * header->data_size) /
-           (header->channels * header->bits_per_sample);
+    return (8 * header->data_size) / (header->channels * header->bits_per_sample);
 }
 
 int wav_header_read(WavHeader* header, FILE* ptr) {
@@ -116,7 +115,7 @@ int wav_header_write(WavHeader* header, FILE* ptr) {
     return 0;
 }
 
-int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode) {
+int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, char* ext) {
     char sample_size = header->bits_per_sample / 8;
     char block_byte_size = 0;
 
@@ -135,8 +134,8 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode) {
 
     unsigned long backup_length = length;
 
-    lsb_encode(sample_for_size, block_byte_size * 4, 0, sample_size,
-               (char*)length_representation, 4, mode);
+    lsb_encode(sample_for_size, block_byte_size * 4, 0, sample_size, (char*)length_representation,
+               4, mode);
     fwrite(sample_for_size, block_byte_size * 4, 1, ptr);
 
     // The write input file
@@ -147,23 +146,35 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode) {
     while (length > BLOCK_SIZE) {
         fread(block, BLOCK_SIZE, 1, msg);
         read = fread(sample, block_byte_size, BLOCK_SIZE, header->ptr);
-        /* printf("Loop %d and length %lu\n",read,length); */
-        lsb_encode(sample, block_byte_size * BLOCK_SIZE, 0, sample_size, block,
-                   BLOCK_SIZE, mode);
+        lsb_encode(sample, block_byte_size * BLOCK_SIZE, 0, sample_size, block, BLOCK_SIZE, mode);
         fwrite(sample, block_byte_size * BLOCK_SIZE, 1, ptr);
         length -= BLOCK_SIZE;
     }
     fread(block, length, 1, msg);
     read = fread(sample, block_byte_size, length, header->ptr);
-    /* printf("%d\n",read); */
-    lsb_encode(sample, block_byte_size * length, 0, sample_size, block, length,
-               mode);
+    lsb_encode(sample, block_byte_size * length, 0, sample_size, block, length, mode);
     fwrite(sample, block_byte_size, length, ptr);
+    free(block);
+
+    // If needed, write extension
+
+    int len = strlen(ext);  // ATTENTION, must be NULL terminated
+    int full_len = len + 1;
+    if (ext != NULL) {
+        len = strlen(ext);  // ATTENTION, must be NULL terminated
+        full_len = len + 1;
+        char* sample_ext = (char*)calloc(block_byte_size * full_len, 1);
+        read = fread(sample_ext, block_byte_size, full_len, header->ptr);
+        lsb_encode(sample_ext, block_byte_size * full_len, 0, sample_size, ext, full_len, mode);
+        fwrite(sample_ext, block_byte_size * full_len, 1, ptr);
+        free(sample_ext);
+    }
 
     // Finally write rest of file
 
-    int remain = header->data_size - (4 * block_byte_size) -
-                 (backup_length * block_byte_size);
+    int remain = header->data_size - (4 * block_byte_size) - (backup_length * block_byte_size);
+    if (ext != NULL) remain -= block_byte_size * full_len;
+
     char byte[1];
 
     while (remain-- > 0) {
@@ -174,7 +185,7 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode) {
     return 0;
 }
 
-int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode) {
+int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, char* ext) {
     char sample_size = header->bits_per_sample / 8;
     int block_byte_size = 0;
 
@@ -192,8 +203,8 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode) {
     int read = 0;
 
     read = fread(sample_for_size, block_byte_size, 4, header->ptr);
-    lsb_decode(sample_for_size, block_byte_size * 4, 0, sample_size,
-               (char*)length_representation, 4, mode);
+    lsb_decode(sample_for_size, block_byte_size * 4, 0, sample_size, (char*)length_representation,
+               4, mode);
     // Decoded data is in little endian
     length = num_representation_to_dec(length_representation, 4);
 
@@ -205,8 +216,7 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode) {
         block = (char*)calloc(BLOCK_SIZE, 1);
         sample = (char*)calloc(block_byte_size * BLOCK_SIZE, 1);
         read = fread(sample, block_byte_size, BLOCK_SIZE, header->ptr);
-        lsb_decode(sample, block_byte_size * BLOCK_SIZE, 0, sample_size, block,
-                   BLOCK_SIZE, mode);
+        lsb_decode(sample, block_byte_size * BLOCK_SIZE, 0, sample_size, block, BLOCK_SIZE, mode);
         fwrite(block, BLOCK_SIZE, 1, output);
         length -= BLOCK_SIZE;
         free(sample);
@@ -215,10 +225,20 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode) {
     block = (char*)calloc(BLOCK_SIZE, 1);
     sample = (char*)calloc(block_byte_size * BLOCK_SIZE, 1);
     read = fread(sample, block_byte_size, length, header->ptr);
-    lsb_decode(sample, block_byte_size * length, 0, sample_size, block, length,
-               mode);
+    lsb_decode(sample, block_byte_size * length, 0, sample_size, block, length, mode);
     read = fwrite(block, 1, length, output);
     free(sample);
     free(block);
+
+    // Finally, get extension if needed
+
+    if (ext != NULL) {
+        sample = (char*)calloc(block_byte_size * MAX_EXTENSION_SIZE, 1);
+        read = fread(sample, block_byte_size, MAX_EXTENSION_SIZE, header->ptr);
+        lsb_decode(sample, block_byte_size * MAX_EXTENSION_SIZE, 0, sample_size, ext,
+                   MAX_EXTENSION_SIZE, mode);
+        free(sample);
+    }
+
     return 0;
 }

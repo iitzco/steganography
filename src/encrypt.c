@@ -45,8 +45,7 @@ void crypto_get_key(char *password, unsigned char *key) {
         crypto_handle_error();
 }
 
-int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len,
-                   char *ciphertext) {
+int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len, char *ciphertext) {
     int len, ciphertext_len;
 
     unsigned char key[64];
@@ -58,10 +57,10 @@ int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len,
     int nid = crypto_get_cipher_nid(params->algorithm, params->mode);
     const EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
 
-    if (EVP_EncryptInit_ex(ctx, cipher, NULL, key, iv) != 1)
-        crypto_handle_error();
+    if (EVP_EncryptInit_ex(ctx, cipher, NULL, key, iv) != 1) crypto_handle_error();
 
-    if (EVP_EncryptUpdate(ctx, (unsigned char *)ciphertext, &len, (unsigned char *)plaintext, plaintext_len) != 1)
+    if (EVP_EncryptUpdate(ctx, (unsigned char *)ciphertext, &len, (unsigned char *)plaintext,
+                          plaintext_len) != 1)
         crypto_handle_error();
 
     ciphertext_len = len;
@@ -89,11 +88,10 @@ int crypto_decrypt(Encryption *params, char *ciphertext, size_t ciphertext_len,
     int nid = crypto_get_cipher_nid(params->algorithm, params->mode);
     const EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
 
-    if (EVP_DecryptInit_ex(ctx, cipher, NULL, key, iv) != 1)
-        crypto_handle_error();
+    if (EVP_DecryptInit_ex(ctx, cipher, NULL, key, iv) != 1) crypto_handle_error();
 
-    if (EVP_DecryptUpdate(ctx, (unsigned char *)decryptedtext, &len,
-                      (unsigned char *)ciphertext, ciphertext_len) != 1)
+    if (EVP_DecryptUpdate(ctx, (unsigned char *)decryptedtext, &len, (unsigned char *)ciphertext,
+                          ciphertext_len) != 1)
         crypto_handle_error();
 
     decryptedtext_len = len;
