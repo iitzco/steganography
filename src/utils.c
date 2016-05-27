@@ -8,7 +8,6 @@
 int rename_file_with_extension(char* filename, char* ext) {
     char* file_with_ext = malloc(strlen(filename) + MAX_EXTENSION_SIZE + 1);
     strcpy(file_with_ext, filename);
-    strcat(file_with_ext, ".");
     strcat(file_with_ext, ext);
     rename(filename, file_with_ext);
     printf("Saving %s\n", file_with_ext);
@@ -18,7 +17,7 @@ int rename_file_with_extension(char* filename, char* ext) {
 char* get_filename_ext(const char* filename) {
     char* dot = strrchr(filename, '.');
     if (!dot || dot == filename) return "";
-    return dot + 1;
+    return dot;
 }
 
 FILE* open_file(char* file, char* mode) {
