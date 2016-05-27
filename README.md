@@ -21,7 +21,7 @@ The program receives the carrier wav file, the steganographic method and the out
 For example:
 
 ```bash
-$ ./stegowav --p samples/dup.wav --out samples/output.png --steg LSB4 --extract
+$ ./stegowav --p samples/dup.wav --out samples/output --steg LSB4 --extract
 ```
 
 Note that if the data to hide is too large and the method is lsb4, the output wav file will have noticeable noise.
