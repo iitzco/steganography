@@ -1,6 +1,7 @@
 #include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
+#include <openssl/md5.h>
 #include <openssl/obj_mac.h>
 #include <string.h>
 #include "arguments.h"
@@ -41,8 +42,9 @@ int crypto_get_cipher_nid(CipherAlgorithm algo, CipherMode mode) {
 }
 
 void crypto_get_key(char *password, unsigned char *key) {
-    if (PKCS5_PBKDF2_HMAC_SHA1(password, strlen(password), NULL, 0, 1000, 32, key) != 1)
-        crypto_handle_error();
+    /* if (PKCS5_PBKDF2_HMAC_SHA1(password, strlen(password), NULL, 0, 1000, 32, key) != 1) */
+    /*     crypto_handle_error(); */
+    MD5((const unsigned char *)password, strlen(password), key);
 }
 
 int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len, char *ciphertext) {
