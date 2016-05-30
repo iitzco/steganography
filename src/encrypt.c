@@ -27,10 +27,10 @@ void crypto_handle_error(void) {
 int crypto_get_cipher_nid(CipherAlgorithm algo, CipherMode mode) {
     static int nids[ALGO_MAX][MODE_MAX] = {
         {0, 0, 0, 0, 0},
-        {0, NID_aes_128_ecb, NID_aes_128_cfb128, NID_aes_128_ofb128, NID_aes_128_cbc},
-        {0, NID_aes_192_ecb, NID_aes_192_cfb128, NID_aes_192_ofb128, NID_aes_192_cbc},
-        {0, NID_aes_256_ecb, NID_aes_256_cfb128, NID_aes_256_ofb128, NID_aes_256_cbc},
-        {0, NID_des_ecb, NID_des_cfb64, NID_des_ofb64, NID_des_cbc}};
+        {0, NID_aes_128_ecb, NID_aes_128_cfb8, NID_aes_128_ofb128, NID_aes_128_cbc},
+        {0, NID_aes_192_ecb, NID_aes_192_cfb8, NID_aes_192_ofb128, NID_aes_192_cbc},
+        {0, NID_aes_256_ecb, NID_aes_256_cfb8, NID_aes_256_ofb128, NID_aes_256_cbc},
+        {0, NID_des_ecb, NID_des_cfb8, NID_des_ofb64, NID_des_cbc}};
 
     int nid = nids[algo][mode];
     if (nid == 0) {
