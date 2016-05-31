@@ -226,10 +226,12 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, char* ext) 
     // Finally, get extension if needed
 
     if (ext != NULL) {
-        sample = (char*)calloc(block_byte_size * MAX_EXTENSION_SIZE, 1);
-        read = fread(sample, block_byte_size, MAX_EXTENSION_SIZE, header->ptr);
-        lsb_decode(sample, block_byte_size * MAX_EXTENSION_SIZE, 0, sample_size, ext,
-                   MAX_EXTENSION_SIZE, mode);
+        int i = 0;
+        sample = (char*)calloc(block_byte_size, 1);
+        do {
+            read = fread(sample, block_byte_size, 1, header->ptr);
+            lsb_decode(sample, block_byte_size, 0, sample_size, &(ext[i]), 1, mode);
+        } while (ext[i++] != 0);
         free(sample);
     }
 
