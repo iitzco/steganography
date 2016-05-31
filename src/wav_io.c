@@ -208,26 +208,24 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, char* ext) 
 
     // Then, decode file
 
-    char* sample = NULL;
-    char* block = NULL;
     int block_size = BLOCK_SIZE;
+    char* block = (char*)malloc(block_size);
+    char* sample = (char*)malloc(block_byte_size * block_size);
     while (length > 0) {
         if (length < BLOCK_SIZE) block_size = length;
-        block = (char*)calloc(block_size, 1);
-        sample = (char*)calloc(block_byte_size * block_size, 1);
         read = fread(sample, block_byte_size, block_size, header->ptr);
         lsb_decode(sample, block_byte_size * block_size, 0, sample_size, block, block_size, mode);
         fwrite(block, block_size, 1, output);
         length -= block_size;
-        free(sample);
-        free(block);
     }
+    free(block);
+    free(sample);
 
     // Finally, get extension if needed
 
     if (ext != NULL) {
         int i = 0;
-        sample = (char*)calloc(block_byte_size, 1);
+        sample = (char*)malloc(block_byte_size);
         do {
             read = fread(sample, block_byte_size, 1, header->ptr);
             lsb_decode(sample, block_byte_size, 0, sample_size, &(ext[i]), 1, mode);

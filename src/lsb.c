@@ -37,6 +37,7 @@ void _lsb_decode(lsb_params_t params, char* carrier, size_t carrier_size, size_t
     for (int i = offset + chunk_size - 1, j = 0; i < carrier_size && j < msg_size;
          i += chunk_size) {
         char msgbit = carrier[i] & mask;
+        msg[j] &= (mask << off) ^ 0xFF;
         msg[j] |= msgbit << off;
 
         off -= params.doff;
