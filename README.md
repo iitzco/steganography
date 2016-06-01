@@ -23,6 +23,13 @@ For example:
 ```bash
 $ ./stegowav --p samples/dup.wav --out samples/output --steg LSB4 --extract
 ```
+#### Important
+
+To check if the input file that was embed and the output file that was extracted are equal, you can run:
+
+```bash
+cmp --silent file1 file2 || echo "files are different"
+```
 
 Note that if the data to hide is too large and the method is lsb4, the output wav file will have noticeable noise.
 

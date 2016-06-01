@@ -156,8 +156,7 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, cha
 
     // If needed, write extension
 
-    int len = strlen(ext);  // ATTENTION, must be NULL terminated
-    int full_len = len + 1;
+    int len = 0, full_len = 0;  // ATTENTION, must be NULL terminated
     if (ext != NULL) {
         len = strlen(ext);  // ATTENTION, must be NULL terminated
         full_len = len + 1;
