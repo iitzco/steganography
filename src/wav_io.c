@@ -133,7 +133,9 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, cha
     dec_to_num_representation(length, length_representation, 4);
 
     unsigned long backup_length = length;
+    int read = 0;
 
+    read = fread(sample_for_size, block_byte_size, 4, header->ptr);
     lsb_encode(sample_for_size, block_byte_size * 4, 0, sample_size, (char*)length_representation,
                4, mode);
     fwrite(sample_for_size, block_byte_size * 4, 1, ptr);
@@ -142,7 +144,6 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, cha
 
     char sample[block_byte_size * BLOCK_SIZE];
     char* block = (char*)calloc(BLOCK_SIZE, 1);
-    int read = 0;
     int block_size = BLOCK_SIZE;
     while (length > 0) {
         if (length < BLOCK_SIZE) block_size = length;
