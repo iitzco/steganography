@@ -31,8 +31,11 @@ int extract_data(WavHeader* header, Arguments* arguments) {
     wav_header_read(header, ptr);
 
     char* ext = (char*)calloc(MAX_EXTENSION_SIZE, 1);
-    wav_stego_decode(header, ptr_write, arguments->steg, ext);
-
+    int ret = wav_stego_decode(header, ptr_write, arguments->steg, ext);
+    if (ret == -1) {
+        printf("Error while decoding file.\n");
+        return -1;
+    }
     rename_file_with_extension(arguments->out_file, ext);
     return 0;
 }
