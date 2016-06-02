@@ -18,8 +18,12 @@ int embed_data(WavHeader* header, Arguments* arguments) {
     wav_header_write(header, ptr_write);
 
     char* ext = get_filename_ext(arguments->in_file);
-    wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, ext);
-    printf("Encoding %s\n", ext);
+    int ret = wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, ext);
+    if (ret == -1) {
+        printf("Error while encoding file.\n");
+    } else {
+        printf("Encoding %s\n", ext);
+    }
 
     return 0;
 }
