@@ -6,9 +6,6 @@
 #include <string.h>
 #include "arguments.h"
 
-/* A 128 bit IV */
-unsigned char *iv = (unsigned char *)"0156789012678901";
-
 void crypto_setup(void) {
     ERR_load_crypto_strings();
     OpenSSL_add_all_algorithms();
@@ -41,23 +38,25 @@ int crypto_get_cipher_nid(CipherAlgorithm algo, CipherMode mode) {
     return nid;
 }
 
-void crypto_get_key(char *password, unsigned char *key) {
+void crypto_get_key(const EVP_CIPHER *cipher, char *password, unsigned char *key, unsigned char *iv) {
     /* if (PKCS5_PBKDF2_HMAC_SHA1(password, strlen(password), NULL, 0, 1000, 32, key) != 1) */
     /*     crypto_handle_error(); */
-    MD5((const unsigned char *)password, strlen(password), key);
+
+    if (EVP_BytesToKey(cipher, EVP_md5(), NULL, (unsigned char *)password, strlen(password),1, key, iv) == 0)
+        crypto_handle_error();
 }
 
 int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len, char *ciphertext) {
     int len, ciphertext_len;
-
-    unsigned char key[64];
-    crypto_get_key(params->password, key);
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (!ctx) crypto_handle_error();
 
     int nid = crypto_get_cipher_nid(params->algorithm, params->mode);
     const EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
+
+    unsigned char key[64], iv[64];
+    crypto_get_key(cipher, params->password, key, iv);
 
     if (EVP_EncryptInit_ex(ctx, cipher, NULL, key, iv) != 1) crypto_handle_error();
 
@@ -81,14 +80,14 @@ int crypto_decrypt(Encryption *params, char *ciphertext, size_t ciphertext_len,
                    char *decryptedtext) {
     int len, decryptedtext_len;
 
-    unsigned char key[64];
-    crypto_get_key(params->password, key);
-
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (!ctx) crypto_handle_error();
 
     int nid = crypto_get_cipher_nid(params->algorithm, params->mode);
     const EVP_CIPHER *cipher = EVP_get_cipherbynid(nid);
+
+    unsigned char key[64], iv[64];
+    crypto_get_key(cipher, params->password, key, iv);
 
     if (EVP_DecryptInit_ex(ctx, cipher, NULL, key, iv) != 1) crypto_handle_error();
 
