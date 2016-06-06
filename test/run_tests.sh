@@ -11,8 +11,8 @@ MODES=(ecb cfb ofb cbc)
 echo "Running tests..."
 
 echo "file without encryption"
-./stegowav -p samples/fun.wav -i samples/avatar.png -o test/steg.wav -s LSB1 -e
-./stegowav -p test/steg.wav -o test/out -s LSB1 -x
+./stegowav -p samples/fun.wav -i samples/avatar.png -o test/steg.wav -s LSB4 -e
+./stegowav -p test/steg.wav -o test/out -s LSB4 -x
 cmp samples/avatar.png test/out.png
 
 for ALG in ${ALGS[*]}; do
