@@ -19,7 +19,7 @@ int embed_data(WavHeader* header, Arguments* arguments) {
 
     char *ext = get_filename_ext(arguments->in_file);
 
-    if (arguments->encryption.algorithm != 0) {
+    if (arguments->encryption.password != NULL) {
         FILE *tmp = tmpfile();
 
         char plaintext[BLOCK_SIZE];
@@ -80,7 +80,7 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
     char *ext = NULL;
 
-    if (arguments->encryption.algorithm != 0) {
+    if (arguments->encryption.password != NULL) {
         ptr_out = ptr_write;
         ptr_decrypted = tmpfile();
         ptr_write = tmpfile();
@@ -94,7 +94,7 @@ int extract_data(WavHeader* header, Arguments* arguments) {
         return -1;
     }
 
-    if (arguments->encryption.algorithm != 0) {
+    if (arguments->encryption.password != NULL) {
         fseek(ptr_write, 0, SEEK_SET);
 
         char ciphertext[BLOCK_SIZE];

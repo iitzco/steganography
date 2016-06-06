@@ -174,6 +174,12 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
                 exit(1);
         }
     }
+
+    if (arguments->steg == S_NONE) {
+        printf("ERROR - must specify steganography mode\n");
+        exit(1);
+    }
+
     /* Print any remaining command line arguments (not options). */
     if (optind < argc) {
         fprintf(stderr, "ERROR - unrecognized arguments: ");
@@ -182,10 +188,22 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
         exit(1);
     }
 
-    if (arguments->encryption.password == NULL &&
-        (arguments->encryption.mode != M_NONE || arguments->encryption.algorithm != A_NONE)) {
-        fprintf(stderr, "ERROR - must send a password when indicating mode or algorithm\n");
-        exit(1);
+    if (arguments->encryption.password == NULL) {
+
+        if (arguments->encryption.mode != M_NONE || arguments->encryption.algorithm != A_NONE) {
+            fprintf(stderr, "ERROR - must send a password when indicating mode or algorithm\n");
+            exit(1);
+        }
+
+    } else {
+
+        if (arguments->encryption.algorithm == A_NONE) {
+            arguments->encryption.algorithm = AES128;
+        }
+
+        if (arguments->encryption.mode == M_NONE) {
+            arguments->encryption.mode = CBC;
+        }
     }
 }
 
