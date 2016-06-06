@@ -2,6 +2,9 @@
 
 set -e
 
+green=$(tput setaf 2)
+normal=$(tput sgr0)
+
 ALGS=(aes128 aes192 aes256 des)
 MODES=(ecb cfb ofb cbc)
 
@@ -20,3 +23,5 @@ for ALG in ${ALGS[*]}; do
     cmp samples/avatar.png test/out.png
   done
 done
+
+echo "${green}All tests passed.${normal}"
