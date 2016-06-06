@@ -43,34 +43,6 @@ long little_to_big_4_bytes(unsigned char buffer4[]) {
 
 long little_to_big_2_bytes(unsigned char buffer2[]) { return buffer2[0] | (buffer2[1] << 8); }
 
-char* file_to_char_array(FILE* file) {
-    long lSize;
-    char* buffer;
-
-    fseek(file, 0L, SEEK_END);
-    lSize = ftell(file);
-    rewind(file);
-
-    // Allocate memory for entire content
-    buffer = calloc(1, lSize + 1);
-    if (!buffer) {
-        printf("Error allocating\n");
-        fclose(file);
-        exit(1);
-    }
-
-    // Copy the file into the buffer
-    if (1 != fread(buffer, lSize, 1, file)) {
-        fclose(file);
-        free(buffer);
-        printf("Error reading file\n");
-        exit(1);
-    }
-
-    fclose(file);
-    return buffer;
-}
-
 void dec_to_num_representation(unsigned long value, unsigned char vec[], int vec_size) {
     unsigned char i = 0;
     unsigned long BASE = 256;
