@@ -149,6 +149,7 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 int main(int argc, char** argv) {
     Arguments arguments;
 
+    args_init(&arguments);
     args_parse(argc, argv, &arguments);
 
     WavHeader header;

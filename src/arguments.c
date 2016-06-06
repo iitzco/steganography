@@ -28,8 +28,11 @@ void version() {
     printf("built with %s\n", OPENSSL_VERSION_TEXT);
 }
 
-void args_parse(int argc, char** argv, Arguments* arguments) {
+void args_init(Arguments* arguments) {
     memset(arguments, 0, sizeof(*arguments));
+}
+
+void args_parse(int argc, char** argv, Arguments* arguments) {
     int c;
     static struct option long_options[] = {
         {"help", no_argument, 0, 'h'},       {"version", no_argument, 0, 'v'},
