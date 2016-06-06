@@ -22,7 +22,7 @@ int embed_data(WavHeader* header, Arguments* arguments) {
     char *ext = get_filename_ext(arguments->in_file);
 
     if (arguments->encryption.algorithm != 0) {
-        FILE *tmp = open_file("/tmp/hello", "w+b");
+        FILE *tmp = tmpfile();
 
         char plaintext[BLOCK_SIZE];
         char ciphertext[BLOCK_SIZE * 2];
@@ -85,8 +85,8 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
     if (arguments->encryption.algorithm != 0) {
         ptr_out = ptr_write;
-        ptr_decrypted = open_file("/tmp/hello3", "w+b");
-        ptr_write = open_file("/tmp/hello2", "w+b");
+        ptr_decrypted = tmpfile();
+        ptr_write = tmpfile();
     } else {
         ext = malloc(MAX_EXTENSION_SIZE);
     }
