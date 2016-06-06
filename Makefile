@@ -5,7 +5,7 @@ IDIRS = -I./include -I/usr/local/opt/openssl/include
 CFLAGS = -g -Wall $(IDIRS)
 LDFLAGS = -lcrypto
 
-.PHONY: default all clean format
+.PHONY: default all clean test format
 
 default: $(TARGET)
 all: default
@@ -25,6 +25,9 @@ $(TARGET): $(OBJECTS)
 clean:
 	find . -type f -name '*.o' -delete
 	-rm -f $(TARGET)
+
+test: $(TARGET)
+	@./test/run_tests.sh
 
 format:
 	find . -type f -name '*.c' | xargs clang-format -i

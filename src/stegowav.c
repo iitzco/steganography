@@ -63,8 +63,7 @@ int embed_data(WavHeader* header, Arguments* arguments) {
     int ret = wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, ext);
     if (ret == -1) {
         fprintf(stderr, "Error while encoding file.\n");
-    } else {
-        printf("Encoding %s\n", ext);
+        exit(1);
     }
 
     fclose(ptr);
@@ -98,17 +97,6 @@ int extract_data(WavHeader* header, Arguments* arguments) {
     }
 
     if (arguments->encryption.algorithm != 0) {
-        // DEBUG: print ciphertext
-        int ciphertext_len = get_file_size(ptr_write);
-        printf("ciphertext_len: %d\n", ciphertext_len);
-        fseek(ptr_write, 0, SEEK_SET);
-
-        char *buf = (char *)malloc(ciphertext_len);
-        fread(buf, ciphertext_len, 1, ptr_write);
-        BIO_dump_fp(stdout, (const char *)buf, ciphertext_len);
-        free(buf);
-        // END DEBUG
-
         fseek(ptr_write, 0, SEEK_SET);
 
         char ciphertext[BLOCK_SIZE];
@@ -136,8 +124,13 @@ int extract_data(WavHeader* header, Arguments* arguments) {
         fread(length_vec, 4, 1, ptr_decrypted);
         unsigned long length = num_representation_to_dec(length_vec, 4);
 
-        fread(decryptedtext, length, 1, ptr_decrypted);
-        fwrite(decryptedtext, length, 1, ptr_out);
+        int block_size = BLOCK_SIZE;
+        while (length > 0) {
+            if (length < BLOCK_SIZE) block_size = length;
+            fread(decryptedtext, 1, block_size, ptr_decrypted);
+            fwrite(decryptedtext, block_size, 1, ptr_out);
+            length -= block_size;
+        }
 
         ext = malloc(MAX_EXTENSION_SIZE);
         fread(ext, 1, MAX_EXTENSION_SIZE, ptr_decrypted);

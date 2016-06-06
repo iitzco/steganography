@@ -108,3 +108,5 @@ docs/
 
 stegowav
 samples/dup.wav
+test/out.png
+test/steg.wav

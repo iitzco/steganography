@@ -10,7 +10,6 @@ int rename_file_with_extension(char* filename, char* ext) {
     strcpy(file_with_ext, filename);
     strcat(file_with_ext, ext);
     rename(filename, file_with_ext);
-    printf("Saving %s\n", file_with_ext);
     return 0;
 }
 
