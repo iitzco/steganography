@@ -5,6 +5,7 @@
 #include <openssl/obj_mac.h>
 #include <string.h>
 #include "arguments.h"
+#include "encrypt.h"
 
 void crypto_setup(void) {
     ERR_load_crypto_strings();
@@ -46,9 +47,7 @@ void crypto_get_key(const EVP_CIPHER *cipher, char *password, unsigned char *key
         crypto_handle_error();
 }
 
-int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len, char *ciphertext) {
-    int len, ciphertext_len;
-
+CipherContext *crypto_encrypt_init(Encryption *params) {
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (!ctx) crypto_handle_error();
 
@@ -58,27 +57,36 @@ int crypto_encrypt(Encryption *params, char *plaintext, size_t plaintext_len, ch
     unsigned char key[64], iv[64];
     crypto_get_key(cipher, params->password, key, iv);
 
-    if (EVP_EncryptInit_ex(ctx, cipher, NULL, key, iv) != 1) crypto_handle_error();
-
-    if (EVP_EncryptUpdate(ctx, (unsigned char *)ciphertext, &len, (unsigned char *)plaintext,
-                          plaintext_len) != 1)
+    if (EVP_EncryptInit_ex(ctx, cipher, NULL, key, iv) != 1)
         crypto_handle_error();
 
-    ciphertext_len = len;
+    return ctx;
+}
 
-    if (EVP_EncryptFinal_ex(ctx, (unsigned char *)ciphertext + len, &len) != 1)
+int crypto_encrypt_update(CipherContext *ctx, char *plaintext, int plaintext_len, char *ciphertext) {
+
+    int ciphertext_len;
+
+    if (EVP_EncryptUpdate(ctx, (unsigned char *)ciphertext, &ciphertext_len,
+                          (unsigned char *)plaintext,  plaintext_len) != 1)
         crypto_handle_error();
 
-    ciphertext_len += len;
+    return ciphertext_len;
+}
+
+int crypto_encrypt_final(CipherContext *ctx, char *ciphertext) {
+
+    int ciphertext_len;
+
+    if (EVP_EncryptFinal_ex(ctx, (unsigned char *)ciphertext, &ciphertext_len) != 1)
+        crypto_handle_error();
 
     EVP_CIPHER_CTX_free(ctx);
 
     return ciphertext_len;
 }
 
-int crypto_decrypt(Encryption *params, char *ciphertext, size_t ciphertext_len,
-                   char *decryptedtext) {
-    int len, decryptedtext_len;
+CipherContext *crypto_decrypt_init(Encryption *params) {
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (!ctx) crypto_handle_error();
@@ -89,18 +97,29 @@ int crypto_decrypt(Encryption *params, char *ciphertext, size_t ciphertext_len,
     unsigned char key[64], iv[64];
     crypto_get_key(cipher, params->password, key, iv);
 
-    if (EVP_DecryptInit_ex(ctx, cipher, NULL, key, iv) != 1) crypto_handle_error();
-
-    if (EVP_DecryptUpdate(ctx, (unsigned char *)decryptedtext, &len, (unsigned char *)ciphertext,
-                          ciphertext_len) != 1)
+    if (EVP_DecryptInit_ex(ctx, cipher, NULL, key, iv) != 1)
         crypto_handle_error();
 
-    decryptedtext_len = len;
+    return ctx;
+}
 
-    if (EVP_DecryptFinal_ex(ctx, (unsigned char *)decryptedtext + len, &len) != 1)
+int crypto_decrypt_update(CipherContext *ctx, char *ciphertext, int ciphertext_len, char *decryptedtext) {
+
+    int decryptedtext_len;
+
+    if (EVP_DecryptUpdate(ctx, (unsigned char *)decryptedtext, &decryptedtext_len,
+                          (unsigned char *)ciphertext, ciphertext_len) != 1)
         crypto_handle_error();
 
-    decryptedtext_len += len;
+    return decryptedtext_len;
+}
+
+int crypto_decrypt_final(CipherContext *ctx, char *decryptedtext) {
+
+    int decryptedtext_len;
+
+    if (EVP_DecryptFinal_ex(ctx, (unsigned char *)decryptedtext, &decryptedtext_len) != 1)
+        crypto_handle_error();
 
     EVP_CIPHER_CTX_free(ctx);
 
@@ -119,15 +138,33 @@ int main(void) {
     char ciphertext[256];
     char decryptedtext[256];
 
-    int decryptedtext_len, ciphertext_len;
+    int len;
+    int decryptedtext_len = 0, ciphertext_len = 0;
     int plaintext_len = strlen(plaintext);
 
     crypto_setup();
 
-    ciphertext_len = crypto_encrypt(&params, plaintext, plaintext_len,
-ciphertext);
-    decryptedtext_len = crypto_decrypt(&params, ciphertext, ciphertext_len,
-decryptedtext);
+    // Encryption
+    CipherContext *ctx = crypto_encrypt_init(&params);
+
+    len = crypto_encrypt_update(ctx, plaintext, plaintext_len, ciphertext);
+    ciphertext_len += len;
+    
+    len = crypto_encrypt_final(ctx, ciphertext + ciphertext_len);
+    ciphertext_len += len;
+
+    BIO_dump_fp(stdout, (const char *)ciphertext, ciphertext_len);
+
+    // Decryption
+    ctx = crypto_decrypt_init(&params);
+
+    len = crypto_decrypt_update(ctx, ciphertext, ciphertext_len, decryptedtext);
+    decryptedtext_len += len;
+
+    len = crypto_decrypt_final(ctx, decryptedtext + decryptedtext_len);
+    decryptedtext_len += len;
+
+    ctx = NULL;
 
     printf("%s\n", decryptedtext);
 
