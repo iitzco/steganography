@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <wav_io.h>
 
 int rename_file_with_extension(char* filename, char* ext) {

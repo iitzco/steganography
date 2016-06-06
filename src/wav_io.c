@@ -1,8 +1,7 @@
-// /**
-//  * Read and parse a wave file
-//  *
-//  * Source: http://truelogic.org/wordpress/2015/09/04/parsing-a-wav-file-in-c/
-//  **/
+/**
+ * Read and parse a wave file. Based on the code found here:
+ * http://truelogic.org/wordpress/2015/09/04/parsing-a-wav-file-in-c/
+ **/
 #include "wav_io.h"
 #include <stdlib.h>
 #include <string.h>
