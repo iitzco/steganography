@@ -40,7 +40,7 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
         {"pass", required_argument, 0, 'w'}, {0, 0, 0, 0}};
     /* getopt_long stores the option index here. */
     int option_index = 0;
-    while ((c = getopt_long(argc, argv, "hve:x:i:p:o:s:a:m:w:", long_options, &option_index)) !=
+    while ((c = getopt_long(argc, argv, "hvexi:p:o:s:a:m:w:", long_options, &option_index)) !=
            -1) {
         switch (c) {
             case 'h':
