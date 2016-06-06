@@ -12,17 +12,17 @@
 #include "wav_io.h"
 
 int embed_data(WavHeader* header, Arguments* arguments) {
-    FILE* ptr = open_file(arguments->p_wavefile, "r");
-    FILE* ptr_write = open_file(arguments->out_file, "w");
-    FILE* ptr_in_data = open_file(arguments->in_file, "r");
+    FILE* ptr = open_file(arguments->p_wavefile, "rb");
+    FILE* ptr_write = open_file(arguments->out_file, "wb");
+    FILE* ptr_in_data = open_file(arguments->in_file, "rb");
 
     wav_header_read(header, ptr);
     wav_header_write(header, ptr_write);
 
-    char *ext = NULL;
+    char *ext = get_filename_ext(arguments->in_file);
 
     if (arguments->encryption.algorithm != 0) {
-        FILE *tmp = tmpfile();
+        FILE *tmp = open_file("/tmp/hello", "w+b");
 
         char plaintext[BLOCK_SIZE];
         char ciphertext[BLOCK_SIZE * 2];
@@ -31,12 +31,23 @@ int embed_data(WavHeader* header, Arguments* arguments) {
 
         CipherContext *ctx = crypto_encrypt_init(&(arguments->encryption));
 
-        int len;
+        int len, read;
 
-        while (fread(plaintext, BLOCK_SIZE, 1, ptr_in_data) > 0) {
-            len = crypto_encrypt_update(ctx, plaintext, BLOCK_SIZE, ciphertext);
+        unsigned long in_size = get_file_size(ptr_in_data);
+        unsigned char in_size_vec[4];
+        memset(in_size_vec, 0, 4);
+        dec_to_num_representation(in_size, in_size_vec, 4);
+
+        len = crypto_encrypt_update(ctx, in_size_vec, sizeof(in_size_vec), ciphertext);
+        fwrite(ciphertext, len, 1, tmp);
+
+        while ((read = fread(plaintext, 1, BLOCK_SIZE, ptr_in_data)) > 0) {
+            len = crypto_encrypt_update(ctx, plaintext, read, ciphertext);
             fwrite(ciphertext, len, 1, tmp);
         }
+
+        len = crypto_encrypt_update(ctx, ext, strlen(ext) + 1, ciphertext);
+        fwrite(ciphertext, len, 1, tmp);
 
         len = crypto_encrypt_final(ctx, ciphertext);
         fwrite(ciphertext, len, 1, tmp);
@@ -47,14 +58,11 @@ int embed_data(WavHeader* header, Arguments* arguments) {
         fseek(tmp, 0, SEEK_SET);
 
         ptr_in_data = tmp;
-
-    } else {
-        ext = get_filename_ext(arguments->in_file);
     }
 
     int ret = wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, ext);
     if (ret == -1) {
-        printf("Error while encoding file.\n");
+        fprintf(stderr, "Error while encoding file.\n");
     } else {
         printf("Encoding %s\n", ext);
     }
@@ -67,9 +75,9 @@ int embed_data(WavHeader* header, Arguments* arguments) {
 }
 
 int extract_data(WavHeader* header, Arguments* arguments) {
-    FILE* ptr = open_file(arguments->p_wavefile, "r");
-    FILE* ptr_write = open_file(arguments->out_file, "w");
-    FILE *ptr_out;
+    FILE* ptr = open_file(arguments->p_wavefile, "rb");
+    FILE* ptr_write = open_file(arguments->out_file, "wb");
+    FILE *ptr_out, *ptr_decrypted;
 
     wav_header_read(header, ptr);
 
@@ -77,21 +85,22 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
     if (arguments->encryption.algorithm != 0) {
         ptr_out = ptr_write;
-        ptr_write = tmpfile();
+        ptr_decrypted = open_file("/tmp/hello3", "w+b");
+        ptr_write = open_file("/tmp/hello2", "w+b");
     } else {
-        ext = (char*)calloc(MAX_EXTENSION_SIZE, 1);
+        ext = malloc(MAX_EXTENSION_SIZE);
     }
 
     int ret = wav_stego_decode(header, ptr_write, arguments->steg, ext);
     if (ret == -1) {
-        printf("Error while decoding file.\n");
+        fprintf(stderr, "Error while decoding file.\n");
         return -1;
     }
 
     if (arguments->encryption.algorithm != 0) {
         // DEBUG: print ciphertext
-        int ciphertext_len = ftell(ptr_write);
-        printf("len: %d\n", ciphertext_len);
+        int ciphertext_len = get_file_size(ptr_write);
+        printf("ciphertext_len: %d\n", ciphertext_len);
         fseek(ptr_write, 0, SEEK_SET);
 
         char *buf = (char *)malloc(ciphertext_len);
@@ -109,23 +118,36 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
         CipherContext *ctx = crypto_decrypt_init(&(arguments->encryption));
 
-        int len;
+        int len, read;
 
-        while (fread(ciphertext, BLOCK_SIZE, 1, ptr_write) > 0) {
-            len = crypto_decrypt_update(ctx, ciphertext, BLOCK_SIZE, decryptedtext);
-            fwrite(decryptedtext, len, 1, ptr_out);
+        while ((read = fread(ciphertext, 1, BLOCK_SIZE, ptr_write)) > 0) {
+            len = crypto_decrypt_update(ctx, ciphertext, read, decryptedtext);
+            fwrite(decryptedtext, len, 1, ptr_decrypted);
         }
 
         len = crypto_decrypt_final(ctx, decryptedtext);
-        fwrite(decryptedtext, len, 1, ptr_out);
+        fwrite(decryptedtext, len, 1, ptr_decrypted);
 
         crypto_teardown();
 
-        fclose(ptr_out);
+        fseek(ptr_decrypted, 0, SEEK_SET);
 
-    } else {
-        rename_file_with_extension(arguments->out_file, ext);
+        unsigned char length_vec[4];
+        fread(length_vec, 4, 1, ptr_decrypted);
+        unsigned long length = num_representation_to_dec(length_vec, 4);
+
+        fread(decryptedtext, length, 1, ptr_decrypted);
+        fwrite(decryptedtext, length, 1, ptr_out);
+
+        ext = malloc(MAX_EXTENSION_SIZE);
+        fread(ext, 1, MAX_EXTENSION_SIZE, ptr_decrypted);
+
+        fclose(ptr_decrypted);
+        fclose(ptr_out);
     }
+
+    rename_file_with_extension(arguments->out_file, ext);
+    free(ext);
 
     fclose(ptr);
     fclose(ptr_write);

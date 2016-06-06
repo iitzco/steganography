@@ -279,7 +279,8 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, char* ext) 
     // First, read length
 
     char sample_for_size[block_byte_size * 4];
-    unsigned char* length_representation = (unsigned char*)calloc(4, 1);
+    unsigned char length_representation[4];
+    memset(length_representation, 0, 4);
     unsigned long length;
     int read = 0;
 
