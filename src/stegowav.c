@@ -5,7 +5,6 @@
 #include "arguments.h"
 #include "encrypt.h"
 #include "lsb.h"
-#include "printer.h"
 #include "utils.h"
 #include "wav_io.h"
 
