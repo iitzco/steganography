@@ -36,7 +36,7 @@ int embed_data(WavHeader* header, Arguments* arguments) {
         memset(in_size_vec, 0, 4);
         dec_to_num_representation(in_size, in_size_vec, 4);
 
-        len = crypto_encrypt_update(ctx, in_size_vec, sizeof(in_size_vec), ciphertext);
+        len = crypto_encrypt_update(ctx, (char*) in_size_vec, sizeof(in_size_vec), ciphertext);
         fwrite(ciphertext, len, 1, tmp);
 
         while ((read = fread(plaintext, 1, BLOCK_SIZE, ptr_in_data)) > 0) {
