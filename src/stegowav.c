@@ -57,15 +57,20 @@ int embed_data(WavHeader* header, Arguments* arguments) {
         ptr_in_data = tmp;
     }
 
-    int ret = wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, ext);
+    FILE* aux_ptr = open_file(arguments->p_wavefile, "rb");
+    int ret = wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, ext, get_file_size(aux_ptr));
+
     if (ret == -1) {
-        fprintf(stderr, "Error while encoding file.\n");
+        fprintf(stderr, "File does not fit in carrier.\n");
+        remove(arguments->out_file);
         exit(1);
     }
 
     fclose(ptr);
     fclose(ptr_write);
     fclose(ptr_in_data);
+
+    printf("Process completed. The output file contains the input message.\n");
 
     return 0;
 }

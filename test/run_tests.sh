@@ -10,10 +10,20 @@ MODES=(ecb cfb ofb cbc)
 
 echo "Running tests..."
 
-echo "file without encryption"
+echo "file without encryption LSB1"
+./stegowav -p samples/fun.wav -i samples/avatar.png -o test/steg.wav -s LSB1 -e
+./stegowav -p test/steg.wav -o test/out -s LSB1 -x
+cmp samples/avatar.png test/out.png
+
+echo "file without encryption LSB4"
 ./stegowav -p samples/fun.wav -i samples/avatar.png -o test/steg.wav -s LSB4 -e
 ./stegowav -p test/steg.wav -o test/out -s LSB4 -x
 cmp samples/avatar.png test/out.png
+
+echo "file without encryption LSBE"
+./stegowav -p samples/fun.wav -i samples/icon.png -o test/steg.wav -s LSBE -e
+./stegowav -p test/steg.wav -o test/out -s LSBE -x
+cmp samples/icon.png test/out.png
 
 for ALG in ${ALGS[*]}; do
   for MODE in ${MODES[*]}; do

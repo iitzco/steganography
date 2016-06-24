@@ -1,5 +1,6 @@
 // WAVE file header format
 // Source: http://truelogic.org/wordpress/2015/09/04/parsing-a-wav-file-in-c/
+
 #ifndef WAVPARSER_H
 #define WAVPARSER_H
 
@@ -35,7 +36,7 @@ int wav_header_read(WavHeader* header, FILE* ptr);
 
 int wav_header_write(WavHeader* header, FILE* ptr);
 
-int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, char* ext);
+int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, char* ext, unsigned long carrier_len);
 
 int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, char* ext);
 
