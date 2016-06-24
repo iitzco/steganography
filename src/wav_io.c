@@ -296,6 +296,7 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, char* ext) 
         if (ret == -1) return -1;
     } else {
         read = fread(sample_for_size, block_byte_size, 4, header->ptr);
+        if (read != 4) return -1;
     }
 
     lsb_decode(sample_for_size, block_byte_size * 4, 0, sample_size, (char*)length_representation,
@@ -315,6 +316,7 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, char* ext) 
             if (ret == -1) return -1;
         } else {
             read = fread(sample, block_byte_size, block_size, header->ptr);
+            if (read != block_size) return -1;
         }
         lsb_decode(sample, block_byte_size * block_size, 0, sample_size, block, block_size,
                    aux_mode);
@@ -335,6 +337,7 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, char* ext) 
                 if (ret == -1) return -1;
             } else {
                 read = fread(sample, block_byte_size, 1, header->ptr);
+                if (read != 1) return -1;
             }
             lsb_decode(sample, block_byte_size, 0, sample_size, &(ext[i]), 1, aux_mode);
         } while (ext[i++] != 0);

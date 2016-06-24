@@ -95,7 +95,10 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
     int ret = wav_stego_decode(header, ptr_write, arguments->steg, ext);
     if (ret == -1) {
-        fprintf(stderr, "Error while decoding file.\n");
+        fprintf(
+            stderr,
+            "Error while decoding file. Input file does not contain data in the specified mode.\n");
+        remove(arguments->out_file);
         return -1;
     }
 
@@ -147,6 +150,8 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
     fclose(ptr);
     fclose(ptr_write);
+
+    printf("Process completed. Extraction succeeded.\n");
 
     return 0;
 }
