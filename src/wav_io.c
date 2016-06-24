@@ -170,8 +170,10 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, cha
 
     // Check if file fits in carrier
 
+    int str_ext_len = 0;
+    if (ext != NULL) str_ext_len = (strlen(ext) + 1);
     if (mode != LSBE &&
-        carrier_len - HEADER_SIZE < block_byte_size * (4 + get_file_size(msg) + strlen(ext) + 1))
+        carrier_len - HEADER_SIZE < block_byte_size * (4 + get_file_size(msg) + str_ext_len))
         return -1;
 
     StegMode aux_mode = mode;

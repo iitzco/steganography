@@ -55,6 +55,8 @@ int embed_data(WavHeader* header, Arguments* arguments) {
         fseek(tmp, 0, SEEK_SET);
 
         ptr_in_data = tmp;
+
+        ext = NULL;
     }
 
     FILE* aux_ptr = open_file(arguments->p_wavefile, "rb");
