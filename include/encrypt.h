@@ -18,7 +18,8 @@ int crypto_encrypt_final(CipherContext *ctx, char *ciphertext);
 
 CipherContext *crypto_decrypt_init(Encryption *params);
 
-int crypto_decrypt_update(CipherContext *ctx, char *ciphertext, int ciphertext_len, char *decryptedtext);
+int crypto_decrypt_update(CipherContext *ctx, char *ciphertext, int ciphertext_len,
+                          char *decryptedtext);
 
 int crypto_decrypt_final(CipherContext *ctx, char *decryptedtext);
 

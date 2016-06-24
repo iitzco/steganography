@@ -16,17 +16,17 @@ int embed_data(WavHeader* header, Arguments* arguments) {
     wav_header_read(header, ptr);
     wav_header_write(header, ptr_write);
 
-    char *ext = get_filename_ext(arguments->in_file);
+    char* ext = get_filename_ext(arguments->in_file);
 
     if (arguments->encryption.password != NULL) {
-        FILE *tmp = tmpfile();
+        FILE* tmp = tmpfile();
 
         char plaintext[BLOCK_SIZE];
         char ciphertext[BLOCK_SIZE * 2];
 
         crypto_setup();
 
-        CipherContext *ctx = crypto_encrypt_init(&(arguments->encryption));
+        CipherContext* ctx = crypto_encrypt_init(&(arguments->encryption));
 
         int len, read;
 
@@ -35,7 +35,7 @@ int embed_data(WavHeader* header, Arguments* arguments) {
         memset(in_size_vec, 0, 4);
         dec_to_num_representation(in_size, in_size_vec, 4);
 
-        len = crypto_encrypt_update(ctx, (char*) in_size_vec, sizeof(in_size_vec), ciphertext);
+        len = crypto_encrypt_update(ctx, (char*)in_size_vec, sizeof(in_size_vec), ciphertext);
         fwrite(ciphertext, len, 1, tmp);
 
         while ((read = fread(plaintext, 1, BLOCK_SIZE, ptr_in_data)) > 0) {
@@ -58,7 +58,8 @@ int embed_data(WavHeader* header, Arguments* arguments) {
     }
 
     FILE* aux_ptr = open_file(arguments->p_wavefile, "rb");
-    int ret = wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, ext, get_file_size(aux_ptr));
+    int ret = wav_stego_encode(header, ptr_write, ptr_in_data, arguments->steg, ext,
+                               get_file_size(aux_ptr));
 
     if (ret == -1) {
         fprintf(stderr, "File does not fit in carrier.\n");
@@ -82,7 +83,7 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
     wav_header_read(header, ptr);
 
-    char *ext = NULL;
+    char* ext = NULL;
 
     if (arguments->encryption.password != NULL) {
         ptr_out = ptr_write;
@@ -106,7 +107,7 @@ int extract_data(WavHeader* header, Arguments* arguments) {
 
         crypto_setup();
 
-        CipherContext *ctx = crypto_decrypt_init(&(arguments->encryption));
+        CipherContext* ctx = crypto_decrypt_init(&(arguments->encryption));
 
         int len, read;
 

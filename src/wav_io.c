@@ -154,7 +154,8 @@ void fill_with_ones(unsigned char* vec, int size) {
     }
 }
 
-int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, char* ext, unsigned long carrier_len) {
+int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, char* ext,
+                     unsigned long carrier_len) {
     char sample_size = header->bits_per_sample / 8;
     char block_byte_size = 0;
 
@@ -169,7 +170,8 @@ int wav_stego_encode(WavHeader* header, FILE* ptr, FILE* msg, StegMode mode, cha
 
     // Check if file fits in carrier
 
-    if (mode != LSBE && carrier_len - HEADER_SIZE < block_byte_size*(4 + get_file_size(msg) + strlen(ext) + 1))
+    if (mode != LSBE &&
+        carrier_len - HEADER_SIZE < block_byte_size * (4 + get_file_size(msg) + strlen(ext) + 1))
         return -1;
 
     StegMode aux_mode = mode;

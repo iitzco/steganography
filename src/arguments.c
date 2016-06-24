@@ -28,9 +28,7 @@ void version() {
     printf("built with %s\n", OPENSSL_VERSION_TEXT);
 }
 
-void args_init(Arguments* arguments) {
-    memset(arguments, 0, sizeof(*arguments));
-}
+void args_init(Arguments* arguments) { memset(arguments, 0, sizeof(*arguments)); }
 
 void args_parse(int argc, char** argv, Arguments* arguments) {
     int c;
@@ -43,8 +41,7 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
         {"pass", required_argument, 0, 'w'}, {0, 0, 0, 0}};
     /* getopt_long stores the option index here. */
     int option_index = 0;
-    while ((c = getopt_long(argc, argv, "hvexi:p:o:s:a:m:w:", long_options, &option_index)) !=
-           -1) {
+    while ((c = getopt_long(argc, argv, "hvexi:p:o:s:a:m:w:", long_options, &option_index)) != -1) {
         switch (c) {
             case 'h':
                 usage();
@@ -189,14 +186,12 @@ void args_parse(int argc, char** argv, Arguments* arguments) {
     }
 
     if (arguments->encryption.password == NULL) {
-
         if (arguments->encryption.mode != M_NONE || arguments->encryption.algorithm != A_NONE) {
             fprintf(stderr, "ERROR - must send a password when indicating mode or algorithm\n");
             exit(1);
         }
 
     } else {
-
         if (arguments->encryption.algorithm == A_NONE) {
             arguments->encryption.algorithm = AES128;
         }
