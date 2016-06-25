@@ -342,7 +342,9 @@ int wav_stego_decode(WavHeader* header, FILE* output, StegMode mode, char* ext) 
                 if (read != 1) return -1;
             }
             lsb_decode(sample, block_byte_size, 0, sample_size, &(ext[i]), 1, aux_mode);
-        } while (ext[i++] != 0);
+            if (i == 0 && ext[i] != '.') return -1;
+        } while (i < MAX_EXTENSION_SIZE && ext[i++] != 0);
+        if (i == MAX_EXTENSION_SIZE) return -1;
         free(sample);
     }
 
