@@ -65,6 +65,14 @@ int embed_data(WavHeader* header, Arguments* arguments) {
 
     if (ret == -1) {
         fprintf(stderr, "File does not fit in carrier.\n");
+        if (ext != NULL) {
+            FILE* ptr_for_capacity = open_file(arguments->p_wavefile, "rb");
+            unsigned long cap = get_max_capacity(arguments->steg, ptr_for_capacity);
+            fprintf(
+                stderr,
+                "Max carrier capacity for %s is %lu bytes. The input file contains %lu bytes.\n",
+                get_mode_str(arguments->steg), cap, get_file_size(ptr_in_data));
+        }
         remove(arguments->out_file);
         exit(1);
     }
