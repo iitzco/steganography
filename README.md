@@ -23,6 +23,27 @@ For example:
 ```bash
 $ ./stegowav --p samples/dup.wav --out samples/output --steg LSB4 --extract
 ```
+#### To extract an encrypted file
+
+The program receives the carrier wav file, the steganographic method and the output file. 
+For example:
+
+```bash
+$ ./stegowav --p samples/dup.wav --out samples/output --steg LSB4 --extract -a "aes192" -m cfb --pass "thePassword"
+```
+
+#### Options
+This are all avaiable command line arguments and its values:
+
+```
+--p path/to/source
+--out path/to/output
+--steg <LSB1|LSB4|LSBE>
+--extract: toggle this flag to switch to extract mode
+-a <aes128|aes192|aes256|des>
+-m <ecb|cfb|ofb|cbc>
+```
+
 #### Important
 
 To check if the input file that was embed and the output file that was extracted are equal, you can run:
@@ -37,7 +58,7 @@ To check WAV format specification, go to [Microsoft WAVE specs](http://soundfile
 
 ***
 
-Work In Progress 🚜
+
 
 ## Collaborators
 
