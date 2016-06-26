@@ -14,7 +14,7 @@ void usage() {
            "  -i, --in       input fide\n"
            "  -p             WAVE carrier file\n"
            "  -o, --out      output file\n"
-           "  -s, --steg     steganography algorithm [optional]\n"
+           "  -s, --steg     steganography algorithm\n"
            "                 <LSB1|LSB4|LSBE>\n"
            "  -a             encryption algorithm [optional]\n"
            "                 <aes128|aes192|aes256|des>\n"
