@@ -109,7 +109,9 @@ $ ./stegowav --help
 
 #### Important
 
-To check if the input file that was embed and the output file that was extracted are equal, you can run:
+* In order to compile it, you'll need libssl-dev packages (on Ubuntu run *apt-get install libssl-dev*)
+* If you have problems running the test with some Linux distributions, add *-fno-stack-protector* flag on Makefile
+* To check if the input file that was embed and the output file that was extracted are equal, you can run:
 
 ```bash
 cmp --silent file1 file2 || echo "files are different"

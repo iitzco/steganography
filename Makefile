@@ -2,7 +2,7 @@ TARGET = stegowav
 LIBS = -lm
 CC = gcc
 IDIRS = -I./include -I/usr/local/opt/openssl/include
-CFLAGS = -g -Wall $(IDIRS)
+CFLAGS = -g -Wall -std=c99 $(IDIRS)
 LDFLAGS = -lcrypto
 
 .PHONY: default all clean test format
